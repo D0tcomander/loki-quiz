@@ -1,0 +1,537 @@
+name: Apply TVA visual upgrade
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  visual-upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply visual layer
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+
+          # Keep a pristine copy of the pre-upgrade page once.
+          backup = Path('index.original.html')
+          if not backup.exists():
+              backup.write_text(html, encoding='utf-8')
+
+          # Remove accidental browser/proxy injection if it exists.
+          html = re.sub(
+              r'<script[^>]+src=["\']/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main\.js[^>]*></script>\s*',
+              '',
+              html,
+              flags=re.I
+          )
+          html = html.replace('```html', '').replace('```', '')
+
+          visual_css = r'''
+    /* ============================================================
+       TVA VISUAL UPGRADE — premium retro-futuristic terminal layer
+       No quiz logic or question data is changed.
+       ============================================================ */
+
+    :root {
+      --tva-amber-bright: #ffd15c;
+      --tva-amber-soft: rgba(255, 176, 0, 0.14);
+      --tva-orange: #e05b24;
+      --tva-copper: #7e321e;
+      --tva-black: #050302;
+      --tva-panel: rgba(18, 10, 4, 0.82);
+      --tva-line: rgba(255, 176, 0, 0.24);
+      --tva-green-bright: #70f0a9;
+    }
+
+    html {
+      background: #070402;
+    }
+
+    body {
+      position: relative;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(155, 78, 25, 0.22), transparent 32%),
+        radial-gradient(circle at 15% 85%, rgba(255, 176, 0, 0.08), transparent 28%),
+        linear-gradient(145deg, #24140a 0%, #090604 46%, #1a0b05 100%) !important;
+      padding: clamp(8px, 2vw, 24px) !important;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.34;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 79px, rgba(255,176,0,.025) 80px),
+        repeating-linear-gradient(0deg, transparent 0 79px, rgba(255,176,0,.02) 80px);
+      mask-image: radial-gradient(circle at center, black, transparent 78%);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: .055;
+      background: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 4px);
+      mix-blend-mode: screen;
+    }
+
+    .tva-monitor {
+      max-width: 980px !important;
+      background:
+        linear-gradient(145deg, #3b2117 0%, #17100d 16%, #090807 48%, #25120c 100%) !important;
+      border: 15px solid #8e341f !important;
+      border-top-color: #c34d28 !important;
+      border-left-color: #ad4324 !important;
+      border-radius: 34px 34px 44px 44px !important;
+      padding: 18px !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.12),
+        inset 0 -12px 22px rgba(0,0,0,.7),
+        0 3px 0 #3b160e,
+        0 18px 45px rgba(0,0,0,.82),
+        0 40px 100px rgba(0,0,0,.55) !important;
+    }
+
+    .tva-monitor::before,
+    .tva-monitor::after {
+      content: '';
+      position: absolute;
+      top: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d17a42;
+      box-shadow: inset 1px 1px 2px #ffe1a0, 0 0 4px rgba(0,0,0,.9);
+      opacity: .75;
+    }
+
+    .tva-monitor::before { left: 12px; }
+    .tva-monitor::after { right: 12px; }
+
+    .tva-screen {
+      height: 650px !important;
+      border: 1px solid rgba(255,176,0,.28);
+      border-radius: 15px !important;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255,176,0,.055), transparent 36%),
+        #080503 !important;
+      box-shadow:
+        inset 0 0 55px #000,
+        inset 0 0 8px rgba(255,176,0,.18),
+        0 0 0 2px rgba(0,0,0,.8) !important;
+    }
+
+    .timeline-panel {
+      height: 170px !important;
+      border-bottom: 1px solid rgba(255,176,0,.42) !important;
+      background:
+        linear-gradient(rgba(255,176,0,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,176,0,.035) 1px, transparent 1px),
+        radial-gradient(circle at 50% 52%, #211208 0%, #0a0603 65%) !important;
+      background-size: 28px 28px, 28px 28px, auto !important;
+    }
+
+    .timeline-panel::before {
+      content: 'TVA // TEMPORAL AUTHORITY // SECURE CHANNEL';
+      position: absolute;
+      left: 20px;
+      bottom: 12px;
+      z-index: 8;
+      color: rgba(255,176,0,.42);
+      font-size: 9px;
+      letter-spacing: 2px;
+    }
+
+    .timeline-panel::after {
+      content: '● LIVE';
+      position: absolute;
+      right: 20px;
+      bottom: 12px;
+      z-index: 8;
+      color: var(--tva-green-bright);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px var(--tva-green-bright);
+    }
+
+    .timeline-svg {
+      opacity: 1 !important;
+      filter: saturate(.85);
+    }
+
+    .sacred-path {
+      stroke-width: 2.5 !important;
+      filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px var(--tva-amber)) !important;
+    }
+
+    .nexus-branch {
+      stroke-width: 3 !important;
+    }
+
+    .hud-top {
+      top: 12px !important;
+      left: 18px !important;
+      right: 18px !important;
+      font-size: 11px !important;
+      letter-spacing: 1.5px !important;
+    }
+
+    .hud-top span {
+      padding: 5px 9px;
+      border: 1px solid rgba(255,176,0,.22);
+      background: rgba(0,0,0,.36);
+      box-shadow: inset 0 0 8px rgba(255,176,0,.05);
+    }
+
+    .quiz-panel {
+      padding: 24px 34px 30px !important;
+      background:
+        linear-gradient(90deg, rgba(255,176,0,.025), transparent 18%, transparent 82%, rgba(255,176,0,.025)),
+        linear-gradient(180deg, rgba(255,176,0,.025), transparent 35%);
+      text-shadow: 0 0 7px rgba(255,176,0,.42) !important;
+    }
+
+    .quiz-panel::before {
+      content: 'TEMPORAL DOSSIER';
+      position: absolute;
+      top: 8px;
+      right: 24px;
+      color: rgba(255,176,0,.2);
+      font-size: 8px;
+      letter-spacing: 3px;
+      pointer-events: none;
+    }
+
+    #langScreen,
+    #startScreen,
+    #resultScreen {
+      width: min(100%, 620px);
+      padding: clamp(22px, 5vw, 44px) !important;
+      border: 1px solid rgba(255,176,0,.24);
+      background:
+        linear-gradient(135deg, rgba(255,176,0,.07), transparent 32%),
+        rgba(7,4,2,.72);
+      box-shadow:
+        inset 0 0 35px rgba(0,0,0,.75),
+        0 0 28px rgba(255,176,0,.04);
+      position: relative;
+    }
+
+    #langScreen::before,
+    #startScreen::before,
+    #resultScreen::before {
+      content: 'CLASSIFIED // TVA ARCHIVE';
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      color: rgba(255,176,0,.28);
+      font-size: 8px;
+      letter-spacing: 2px;
+    }
+
+    #langScreen h1,
+    #startScreen h1,
+    #resultScreen h1 {
+      color: var(--tva-amber-bright);
+      text-shadow: 0 0 5px var(--tva-amber), 0 0 18px rgba(255,176,0,.28);
+    }
+
+    .terminal-btn {
+      position: relative;
+      min-width: 150px;
+      border: 1px solid var(--tva-amber) !important;
+      border-radius: 2px;
+      background: linear-gradient(180deg, rgba(255,176,0,.08), rgba(255,176,0,.015)) !important;
+      box-shadow: inset 0 0 10px rgba(255,176,0,.035), 0 0 0 1px rgba(0,0,0,.7);
+      letter-spacing: 1px;
+      overflow: hidden;
+    }
+
+    .terminal-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 80%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transform: skewX(-20deg);
+      transition: left .45s ease;
+    }
+
+    .terminal-btn:hover::before {
+      left: 140%;
+    }
+
+    .terminal-btn:hover {
+      box-shadow: 0 0 18px rgba(255,176,0,.3), inset 0 0 15px rgba(255,176,0,.18) !important;
+      transform: translateY(-1px);
+    }
+
+    .question-box {
+      position: relative;
+      padding: 17px 18px 16px;
+      margin: 0 0 16px !important;
+      border: 1px solid rgba(255,176,0,.2);
+      border-left: 3px solid var(--tva-amber);
+      background: linear-gradient(90deg, rgba(255,176,0,.075), rgba(255,176,0,.018));
+      box-shadow: inset 0 0 18px rgba(0,0,0,.45);
+    }
+
+    .question-box::after {
+      content: 'QUERY';
+      position: absolute;
+      top: 7px;
+      right: 9px;
+      color: rgba(255,176,0,.28);
+      font-size: 8px;
+      letter-spacing: 2px;
+    }
+
+    .qnum {
+      display: inline-block;
+      padding: 4px 8px;
+      margin-bottom: 9px !important;
+      border: 1px solid rgba(255,176,0,.3);
+      background: rgba(0,0,0,.3);
+      color: var(--tva-amber-bright) !important;
+      font-size: 10px !important;
+      letter-spacing: 1.8px !important;
+    }
+
+    .question-box h1 {
+      font-size: clamp(20px, 2.4vw, 26px) !important;
+      line-height: 1.32 !important;
+      letter-spacing: .2px;
+    }
+
+    .answers {
+      gap: 9px !important;
+      padding: 2px 5px 18px 0 !important;
+    }
+
+    button.answer {
+      position: relative;
+      min-height: 54px;
+      padding: 13px 16px 13px 52px !important;
+      border: 1px solid rgba(255,176,0,.58) !important;
+      background:
+        linear-gradient(90deg, rgba(255,176,0,.09), rgba(255,176,0,.025) 68%, rgba(255,176,0,.055)) !important;
+      box-shadow: inset 0 0 16px rgba(0,0,0,.42), 0 1px 0 rgba(255,176,0,.08);
+      overflow: hidden;
+    }
+
+    button.answer::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid rgba(255,176,0,.25);
+      background: rgba(255,176,0,.045);
+      color: var(--tva-amber-bright);
+      font-size: 12px;
+      text-shadow: 0 0 8px var(--tva-amber);
+    }
+
+    button.answer:nth-child(1)::before { content: 'A'; }
+    button.answer:nth-child(2)::before { content: 'B'; }
+    button.answer:nth-child(3)::before { content: 'C'; }
+    button.answer:nth-child(4)::before { content: 'D'; }
+
+    button.answer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.08) 50%, transparent 65%);
+      transform: translateX(-110%);
+      transition: transform .5s ease;
+      pointer-events: none;
+    }
+
+    button.answer:hover:not(:disabled) {
+      transform: translateX(4px) !important;
+      border-color: var(--tva-amber-bright) !important;
+      box-shadow: 0 0 16px rgba(255,176,0,.16), inset 0 0 16px rgba(255,176,0,.07) !important;
+    }
+
+    button.answer:hover:not(:disabled)::after {
+      transform: translateX(110%);
+    }
+
+    .answer.correct {
+      box-shadow: 0 0 18px rgba(69,196,134,.35), inset 0 0 20px rgba(69,196,134,.12) !important;
+    }
+
+    .answer.wrong {
+      box-shadow: 0 0 18px rgba(255,51,51,.35), inset 0 0 20px rgba(255,51,51,.12) !important;
+    }
+
+    #explainText {
+      padding: 9px 12px;
+      border-left: 2px solid var(--tva-green);
+      background: rgba(69,196,134,.06);
+    }
+
+    #nextBtn {
+      margin-top: 4px !important;
+      align-self: flex-end;
+    }
+
+    .tva-input {
+      border: 1px solid var(--tva-amber) !important;
+      background: rgba(0,0,0,.68) !important;
+      box-shadow: inset 0 0 14px rgba(0,0,0,.7);
+    }
+
+    .tva-input:focus {
+      border-color: var(--tva-amber-bright) !important;
+      box-shadow: 0 0 18px rgba(255,176,0,.2), inset 0 0 12px rgba(0,0,0,.8) !important;
+    }
+
+    .leaderboard-table {
+      max-width: 620px !important;
+      border: 1px solid rgba(255,176,0,.18);
+      background: rgba(0,0,0,.28);
+      box-shadow: inset 0 0 22px rgba(0,0,0,.5);
+    }
+
+    .leaderboard-table th {
+      padding: 10px 9px !important;
+      background: rgba(255,176,0,.055);
+      color: rgba(255,209,92,.72) !important;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .leaderboard-table td {
+      padding: 10px 9px !important;
+      border-bottom-color: rgba(255,176,0,.13) !important;
+    }
+
+    .leaderboard-table tr:first-child td {
+      color: var(--tva-green-bright) !important;
+      background: rgba(69,196,134,.035);
+    }
+
+    #finalScore {
+      display: grid;
+      place-items: center;
+      width: 150px;
+      height: 150px;
+      margin: 20px auto !important;
+      border: 1px solid rgba(255,176,0,.65);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #100a05 56%, transparent 57%),
+        conic-gradient(var(--tva-amber) 0 65%, rgba(255,176,0,.12) 65% 100%);
+      box-shadow: 0 0 28px rgba(255,176,0,.16), inset 0 0 24px rgba(255,176,0,.08);
+      font-size: 38px !important;
+      line-height: 1;
+    }
+
+    #rank {
+      color: var(--tva-green-bright) !important;
+      text-shadow: 0 0 10px rgba(112,240,169,.32) !important;
+    }
+
+    .screen-glass {
+      background: radial-gradient(circle at center, transparent 43%, rgba(0,0,0,.66) 100%) !important;
+    }
+
+    .scanlines {
+      opacity: .7;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,.18), rgba(0,0,0,.18) 1px, transparent 1px, transparent 4px) !important;
+    }
+
+    .miss-minutes-container {
+      bottom: -8px !important;
+      left: -108px !important;
+      width: 190px !important;
+      z-index: 2 !important;
+      opacity: .96;
+    }
+
+    @media (max-width: 900px) {
+      .tva-monitor {
+        border-width: 10px !important;
+        padding: 10px !important;
+      }
+      .tva-screen { height: 620px !important; }
+      .timeline-panel { height: 145px !important; }
+      .quiz-panel { padding: 20px 18px 25px !important; }
+      .miss-minutes-container {
+        left: -12px !important;
+        bottom: -72px !important;
+        width: 100px !important;
+        z-index: 1 !important;
+      }
+    }
+
+    @media (max-width: 500px) {
+      body { padding: 4px !important; }
+      .tva-monitor { border-width: 7px !important; padding: 7px !important; border-radius: 18px !important; }
+      .tva-screen { height: 650px !important; }
+      .timeline-panel { height: 128px !important; }
+      .hud-top { font-size: 9px !important; left: 8px !important; right: 8px !important; }
+      .hud-top span { padding: 4px 6px; }
+      .quiz-panel { padding: 17px 10px 18px !important; }
+      .question-box { padding: 14px 12px 13px !important; }
+      .question-box h1 { font-size: 18px !important; }
+      button.answer { min-height: 50px; padding: 11px 11px 11px 45px !important; font-size: 14px !important; }
+      button.answer::before { width: 31px; }
+      .terminal-btn { min-width: 125px; font-size: 13px !important; padding: 10px 14px !important; }
+      #finalScore { width: 125px; height: 125px; font-size: 31px !important; }
+      .leaderboard-table { font-size: 10px !important; }
+      .leaderboard-table th, .leaderboard-table td { padding: 7px 4px !important; }
+      .miss-minutes-container { width: 82px !important; left: -8px !important; bottom: -68px !important; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+'''
+
+          marker = '  </style>'
+          if 'TVA VISUAL UPGRADE — premium retro-futuristic terminal layer' not in html:
+              html = html.replace(marker, visual_css + '\n' + marker, 1)
+
+          path.write_text(html, encoding='utf-8')
+
+      - name: Commit visual upgrade
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html index.original.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Apply premium TVA visual upgrade"
+          git push
