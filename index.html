@@ -1,45 +1,55 @@
+```html
 <!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>TVA Terminal & Miss Minutes</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  
-  <script type="text/javascript" src="/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=l_oK5XA9rt4mVI_xOO7nmAjGcJG49wbxE582owD2aQlO9qlMw8O97hSVt6ZMWwkjGQYA5iw8vsiCwlPyhjQBWEdkNicwvJ2HmnBoWkap4d7muo-JPUxP2kntDkHtx5cYeEnto1LNbgSMIvZnUtzQ1g7iSpDLea8a7TeF0N3-fbgzDcp1zS2azHGiBjVe6soVtd6NQjYEM0fs2cd6PtnLoM0T6k6Rsp8luXn-hYPlR9OIXPu2GLWBygGOxKy6XaCeEY5pdGkrLxO_YmBpGFdoiyWDuFULyyQrXP1WkWzJUtfhZI9x47GAYBQvHvtZgxeOq2G9onXmKLwan9IZvQ6upZLoFPfHb6H-6rej5DDPIjKUGg7o0fCswsOmL72NPKxRhJDbB8jtd2iPUww0E6pJisI_HZ2eOORs3RphwCsLlG9NzS5d35r14iAPUimSrzHy7XJsHqCjGVzpL5_KS-cLVs9nYRLGNDrV7bjuTpgZ9GypB4o8AXYUMXgf3F5P5krZBvRVqzyeT9pJ0r5Lg4TEU9aQh4KAVs9NsHQC6ImJpWarD1RwWmeoDQELs11uJICOcokGoUcTs-7_sScWf3feCXlvAwIuGMRkpaWwx3x3OxqotwBkXObe2OFcHl9NJjZ7hxlrHRJDWecvjqfUJyDQd_uBrJoEp5r8sy0wf5-Bviskjbt0YWTtsoc3g9t57uUhOEpYlmQs6bR4jfxQrdycgOXDBeakannwhiQeqHDZYZabkJIQt7vrP75JwwNulZD0bo--HRd1lc2qtpow3J710ohGp70U09ZVPqBEd1-FwwhwpZcpvJ6WZF56nZGgLXbuFUXJvehoIplu7d_-qOYGHj_TDvrltXaYfn8ZUNcOu49CAyH8xwTaBORZ-bJ8SuxUKNsCt1RyjQfwSweqVQp1rw" charset="UTF-8"></script><style>
+
+  <style>
     :root {
-      --tva-bg: #8c6b4a; 
-      --tva-bezel: #c24423; 
-      --screen-bg: #0c0804; 
-      --tva-amber: #ffb000; 
+      --tva-bg: #8c6b4a;
+      --tva-bezel: #c24423;
+      --screen-bg: #0c0804;
+      --tva-amber: #ffb000;
       --tva-amber-dim: rgba(255, 176, 0, 0.3);
-      --tva-red: #ff3333; 
+      --tva-red: #ff3333;
       --tva-green: #45c486;
       --font-mono: 'Share Tech Mono', monospace;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
-      margin: 0; min-height: 100vh;
+      margin: 0;
+      min-height: 100vh;
       background: linear-gradient(135deg, #7a5836 0%, #3d2b1a 100%);
       font-family: var(--font-mono);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 20px; overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
     }
 
     /* === РЕТРО-МОНИТОР TVA === */
+
     .tva-monitor {
       position: relative;
-      width: 100%; max-width: 900px;
+      width: 100%;
+      max-width: 900px;
       background: #1a1a1a;
       border: 18px solid var(--tva-bezel);
       border-radius: 40px 40px 50px 50px;
       padding: 25px;
-      box-shadow: 
+      box-shadow:
         inset 0 0 20px rgba(0,0,0,0.8),
         0 20px 40px rgba(0,0,0,0.7),
         0 50px 100px rgba(0,0,0,0.5);
@@ -48,190 +58,582 @@
 
     .tva-screen {
       position: relative;
-      width: 100%; height: 620px;
+      width: 100%;
+      height: 620px;
       background: var(--screen-bg);
       border-radius: 20px;
       overflow: hidden;
       box-shadow: inset 0 0 40px rgba(0,0,0,1);
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
 
     .screen-glass {
-      position: absolute; inset: 0; z-index: 50; pointer-events: none;
-      background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at center,
+        transparent 40%,
+        rgba(0,0,0,0.6) 100%
+      );
       box-shadow: inset 0 0 15px rgba(255,255,255,0.05);
     }
+
     .scanlines {
-      position: absolute; inset: 0; z-index: 49; pointer-events: none;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2) 2px, transparent 2px, transparent 4px);
+      position: absolute;
+      inset: 0;
+      z-index: 49;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.2),
+        rgba(0,0,0,0.2) 2px,
+        transparent 2px,
+        transparent 4px
+      );
     }
 
     /* === ВЕРХ: СВЯЩЕННАЯ ЛИНИЯ === */
+
     .timeline-panel {
       position: relative;
-      width: 100%; height: 160px;
+      width: 100%;
+      height: 160px;
       border-bottom: 2px solid var(--tva-amber-dim);
-      background: radial-gradient(circle at 50% 50%, #15100a 0%, #0c0804 100%);
+      background: radial-gradient(
+        circle at 50% 50%,
+        #15100a 0%,
+        #0c0804 100%
+      );
       flex-shrink: 0;
       overflow: hidden;
     }
 
     .timeline-svg {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 1; pointer-events: none; opacity: 0.85;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.85;
     }
-    
+
     .sacred-path {
-      fill: none; stroke: #fff; stroke-width: 3;
-      filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 15px var(--tva-amber));
+      fill: none;
+      stroke: #fff;
+      stroke-width: 3;
+      filter:
+        drop-shadow(0 0 8px #fff)
+        drop-shadow(0 0 15px var(--tva-amber));
       animation: pulseLine 3s infinite alternate;
     }
-    
-    .nexus-branch {
-      fill: none; stroke: var(--tva-red); stroke-width: 4;
-      filter: drop-shadow(0 0 10px var(--tva-red));
-      stroke-dasharray: 800; stroke-dashoffset: 800;
-    }
-    .draw-branch { animation: drawPath 8s ease-in-out forwards; }
 
-    @keyframes pulseLine { 0% { opacity: 0.7; } 100% { opacity: 1; stroke-width: 4px; } }
-    @keyframes drawPath { to { stroke-dashoffset: 0; } }
+    .nexus-branch {
+      fill: none;
+      stroke: var(--tva-red);
+      stroke-width: 4;
+      filter: drop-shadow(0 0 10px var(--tva-red));
+      stroke-dasharray: 800;
+      stroke-dashoffset: 800;
+    }
+
+    .draw-branch {
+      animation: drawPath 8s ease-in-out forwards;
+    }
+
+    @keyframes pulseLine {
+      0% {
+        opacity: 0.7;
+      }
+
+      100% {
+        opacity: 1;
+        stroke-width: 4px;
+      }
+    }
+
+    @keyframes drawPath {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
 
     .hud-top {
-      position: absolute; top: 15px; left: 20px; right: 20px;
-      display: flex; justify-content: space-between;
-      color: var(--tva-amber); text-shadow: 0 0 5px var(--tva-amber);
-      font-size: 14px; text-transform: uppercase; letter-spacing: 2px;
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--tva-amber);
+      text-shadow: 0 0 5px var(--tva-amber);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
       z-index: 10;
     }
 
     /* === НИЗ: ВОПРОСЫ И ОТВЕТЫ === */
+
     .quiz-panel {
-      position: relative; z-index: 10;
-      flex-grow: 1; display: flex; flex-direction: column;
+      position: relative;
+      z-index: 10;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
       padding: 20px 30px 30px;
-      color: var(--tva-amber); text-shadow: 0 0 5px var(--tva-amber);
+      color: var(--tva-amber);
+      text-shadow: 0 0 5px var(--tva-amber);
       overflow-y: auto;
     }
 
-    .question-box { margin-bottom: 20px; flex-shrink: 0; }
-    .question-box h1 { margin: 0 0 15px 0; font-size: 22px; line-height: 1.4; }
-    .qnum { font-size: 12px; color: #a87b2b; letter-spacing: 1px; margin-bottom: 5px; }
+    .question-box {
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .question-box h1 {
+      margin: 0 0 15px 0;
+      font-size: 22px;
+      line-height: 1.4;
+    }
+
+    .qnum {
+      font-size: 12px;
+      color: #a87b2b;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
 
     .answers {
-      display: flex; flex-direction: column; gap: 10px;
-      flex-grow: 1; padding-right: 10px; padding-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-grow: 1;
+      padding-right: 10px;
+      padding-bottom: 20px;
     }
-    
-    .answers::-webkit-scrollbar { width: 8px; }
-    .answers::-webkit-scrollbar-track { background: rgba(255, 176, 0, 0.1); border-radius: 4px; }
-    .answers::-webkit-scrollbar-thumb { background: var(--tva-amber); border-radius: 4px; }
+
+    .answers::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .answers::-webkit-scrollbar-track {
+      background: rgba(255, 176, 0, 0.1);
+      border-radius: 4px;
+    }
+
+    .answers::-webkit-scrollbar-thumb {
+      background: var(--tva-amber);
+      border-radius: 4px;
+    }
 
     button.answer {
-      background: rgba(255, 176, 0, 0.05); border: 1px solid var(--tva-amber);
-      color: var(--tva-amber); font-family: var(--font-mono); font-size: 16px;
-      padding: 15px; text-align: left; cursor: pointer;
-      transition: 0.2s; text-shadow: 0 0 5px var(--tva-amber);
+      background: rgba(255, 176, 0, 0.05);
+      border: 1px solid var(--tva-amber);
+      color: var(--tva-amber);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      padding: 15px;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.2s;
+      text-shadow: 0 0 5px var(--tva-amber);
     }
-    button.answer:hover:not(:disabled) {
-      background: var(--tva-amber); color: var(--screen-bg);
-      text-shadow: none; transform: translateX(5px);
-    }
-    button.answer:disabled { cursor: default; }
 
-    .answer.correct { background: var(--tva-green) !important; color: #000 !important; border-color: var(--tva-green); text-shadow: none; box-shadow: 0 0 15px var(--tva-green); }
-    .answer.wrong { background: var(--tva-red) !important; color: #fff !important; border-color: var(--tva-red); text-shadow: none; box-shadow: 0 0 15px var(--tva-red); }
-    .answers.answered button.answer:not(.correct):not(.wrong) { opacity: 0.3; }
+    button.answer:hover:not(:disabled) {
+      background: var(--tva-amber);
+      color: var(--screen-bg);
+      text-shadow: none;
+      transform: translateX(5px);
+    }
+
+    button.answer:disabled {
+      cursor: default;
+    }
+
+    .answer.correct {
+      background: var(--tva-green) !important;
+      color: #000 !important;
+      border-color: var(--tva-green);
+      text-shadow: none;
+      box-shadow: 0 0 15px var(--tva-green);
+    }
+
+    .answer.wrong {
+      background: var(--tva-red) !important;
+      color: #fff !important;
+      border-color: var(--tva-red);
+      text-shadow: none;
+      box-shadow: 0 0 15px var(--tva-red);
+    }
+
+    .answers.answered button.answer:not(.correct):not(.wrong) {
+      opacity: 0.3;
+    }
 
     .terminal-btn {
-      background: transparent; border: 2px solid var(--tva-amber);
-      color: var(--tva-amber); font-family: var(--font-mono); font-size: 16px; font-weight: bold;
-      padding: 12px 25px; cursor: pointer; margin-top: 10px;
-      text-transform: uppercase; text-shadow: 0 0 5px var(--tva-amber); transition: 0.2s;
+      background: transparent;
+      border: 2px solid var(--tva-amber);
+      color: var(--tva-amber);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: bold;
+      padding: 12px 25px;
+      cursor: pointer;
+      margin-top: 10px;
+      text-transform: uppercase;
+      text-shadow: 0 0 5px var(--tva-amber);
+      transition: 0.2s;
       display: inline-block;
     }
-    .terminal-btn.right { align-self: flex-end; }
-    .terminal-btn:hover { background: var(--tva-amber); color: #000; text-shadow: none; }
-    
-    .hidden { display: none !important; }
 
-    /* Поле ввода для лидерборда */
+    .terminal-btn.right {
+      align-self: flex-end;
+    }
+
+    .terminal-btn:hover {
+      background: var(--tva-amber);
+      color: #000;
+      text-shadow: none;
+    }
+
+    .terminal-btn:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* === ПОЛЕ ИМЕНИ === */
+
     .tva-input {
-      background: rgba(0,0,0,0.5); border: 2px solid var(--tva-amber);
-      color: var(--tva-amber); font-family: var(--font-mono); font-size: 18px;
-      padding: 12px; width: 100%; max-width: 300px; text-align: center;
-      margin-bottom: 15px; text-transform: uppercase; outline: none;
+      background: rgba(0,0,0,0.5);
+      border: 2px solid var(--tva-amber);
+      color: var(--tva-amber);
+      font-family: var(--font-mono);
+      font-size: 18px;
+      padding: 12px;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      outline: none;
     }
-    .tva-input::placeholder { color: var(--tva-amber-dim); }
-    .tva-input:focus { box-shadow: 0 0 15px var(--tva-amber-dim); }
 
-    /* Таблица лидеров */
+    .tva-input::placeholder {
+      color: var(--tva-amber-dim);
+    }
+
+    .tva-input:focus {
+      box-shadow: 0 0 15px var(--tva-amber-dim);
+    }
+
+    /* === ТАБЛИЦА ЛИДЕРОВ === */
+
     .leaderboard-table {
-      width: 100%; max-width: 400px; margin: 20px auto; border-collapse: collapse;
-      font-size: 14px; text-align: left;
+      width: 100%;
+      max-width: 480px;
+      margin: 20px auto;
+      border-collapse: collapse;
+      font-size: 14px;
+      text-align: left;
     }
-    .leaderboard-table th { border-bottom: 1px solid var(--tva-amber); padding: 8px; color: var(--tva-amber-dim); }
-    .leaderboard-table td { padding: 8px; border-bottom: 1px dotted var(--tva-amber-dim); }
-    .leaderboard-table tr:nth-child(1) td { color: var(--tva-green); font-weight: bold; text-shadow: 0 0 5px var(--tva-green); }
 
-    .glitch-screen { animation: screenGlitch 0.4s; }
+    .leaderboard-table th {
+      border-bottom: 1px solid var(--tva-amber);
+      padding: 8px;
+      color: var(--tva-amber-dim);
+    }
+
+    .leaderboard-table td {
+      padding: 8px;
+      border-bottom: 1px dotted var(--tva-amber-dim);
+    }
+
+    .leaderboard-table tr:first-child td {
+      color: var(--tva-green);
+      font-weight: bold;
+      text-shadow: 0 0 5px var(--tva-green);
+    }
+
+    .leaderboard-error {
+      color: var(--tva-red);
+      line-height: 1.5;
+      padding: 15px;
+    }
+
+    /* === GLITCH === */
+
+    .glitch-screen {
+      animation: screenGlitch 0.4s;
+    }
+
     @keyframes screenGlitch {
-      0% { transform: translate(0); filter: hue-rotate(0); }
-      20% { transform: translate(-4px, 4px); filter: hue-rotate(-90deg); }
-      40% { transform: translate(4px, -4px); filter: hue-rotate(90deg); }
-      60% { transform: translate(-2px, 2px); }
-      100% { transform: translate(0); filter: hue-rotate(0); }
+      0% {
+        transform: translate(0);
+        filter: hue-rotate(0);
+      }
+
+      20% {
+        transform: translate(-4px, 4px);
+        filter: hue-rotate(-90deg);
+      }
+
+      40% {
+        transform: translate(4px, -4px);
+        filter: hue-rotate(90deg);
+      }
+
+      60% {
+        transform: translate(-2px, 2px);
+      }
+
+      100% {
+        transform: translate(0);
+        filter: hue-rotate(0);
+      }
     }
 
-    /* === КАРТИНКА MISS MINUTES === */
+    /* === MISS MINUTES === */
+
     .miss-minutes-container {
-      position: absolute; bottom: -10px; left: -130px; 
-      width: 220px; height: auto; z-index: 100;
-      animation: float 4s ease-in-out infinite; transition: all 0.3s ease;
+      position: absolute;
+      bottom: -10px;
+      left: -130px;
+      width: 220px;
+      height: auto;
+      z-index: 100;
+      animation: float 4s ease-in-out infinite;
+      transition: all 0.3s ease;
       filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6));
+      pointer-events: none;
     }
-    .miss-minutes-container img { width: 100%; height: auto; display: block; transition: all 0.3s ease; }
 
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-    .is-angry { 
-      animation: shake-angry 0.2s infinite !important; 
-      filter: drop-shadow(0 0 30px rgba(255, 0, 0, 1)) sepia(1) hue-rotate(-50deg) saturate(5) !important;
+    .miss-minutes-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: all 0.3s ease;
     }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    .is-angry {
+      animation: shake-angry 0.2s infinite !important;
+      filter:
+        drop-shadow(0 0 30px rgba(255, 0, 0, 1))
+        sepia(1)
+        hue-rotate(-50deg)
+        saturate(5) !important;
+    }
+
     @keyframes shake-angry {
-      0% { transform: translate(0, 0) scale(1.1); }
-      25% { transform: translate(-8px, 8px) scale(1.1); }
-      50% { transform: translate(8px, -5px) scale(1.1); }
-      75% { transform: translate(-8px, -8px) scale(1.1); }
-      100% { transform: translate(0, 0) scale(1.1); }
+      0% {
+        transform: translate(0, 0) scale(1.1);
+      }
+
+      25% {
+        transform: translate(-8px, 8px) scale(1.1);
+      }
+
+      50% {
+        transform: translate(8px, -5px) scale(1.1);
+      }
+
+      75% {
+        transform: translate(-8px, -8px) scale(1.1);
+      }
+
+      100% {
+        transform: translate(0, 0) scale(1.1);
+      }
     }
 
-    .is-happy { 
-      animation: bounce-happy 0.4s ease-in-out infinite alternate !important; 
-      filter: drop-shadow(0 0 30px rgba(255, 204, 0, 1)) brightness(1.2) saturate(1.5) !important; 
+    .is-happy {
+      animation: bounce-happy 0.4s ease-in-out infinite alternate !important;
+      filter:
+        drop-shadow(0 0 30px rgba(255, 204, 0, 1))
+        brightness(1.2)
+        saturate(1.5) !important;
     }
-    @keyframes bounce-happy { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-30px) scale(1.05); } }
+
+    @keyframes bounce-happy {
+      0% {
+        transform: translateY(0) scale(1);
+      }
+
+      100% {
+        transform: translateY(-30px) scale(1.05);
+      }
+    }
+
+    /* === МОБИЛЬНАЯ ВЕРСИЯ === */
 
     @media (max-width: 900px) {
-      .miss-minutes-container { left: -30px; width: 140px; bottom: -20px; }
-      .tva-screen { height: 600px; }
-      .tva-monitor { padding: 15px; border-width: 12px; border-radius: 20px; }
+      body {
+        padding: 10px;
+      }
+
+      .tva-monitor {
+        padding: 15px;
+        border-width: 12px;
+        border-radius: 20px;
+      }
+
+      .tva-screen {
+        height: 600px;
+      }
+
+      /*
+       * Miss Minutes специально опускаем ниже.
+       * Она больше не перекрывает нижние варианты ответа.
+       */
+      .miss-minutes-container {
+        left: -15px;
+        width: 105px;
+        bottom: -90px;
+        z-index: 1;
+      }
+
+      .quiz-panel {
+        padding: 18px 18px 25px;
+      }
+
+      .question-box h1 {
+        font-size: 20px;
+      }
+
+      button.answer {
+        font-size: 15px;
+        padding: 13px;
+      }
+
+      .hud-top {
+        left: 12px;
+        right: 12px;
+        font-size: 11px;
+        letter-spacing: 1px;
+      }
+
+      .leaderboard-table {
+        font-size: 12px;
+      }
+
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 6px 4px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 5px;
+      }
+
+      .tva-monitor {
+        border-width: 8px;
+        padding: 8px;
+      }
+
+      .tva-screen {
+        height: 620px;
+      }
+
+      .timeline-panel {
+        height: 135px;
+      }
+
+      .quiz-panel {
+        padding: 15px 12px 20px;
+      }
+
+      .question-box h1 {
+        font-size: 18px;
+      }
+
+      button.answer {
+        font-size: 14px;
+        padding: 12px;
+      }
+
+      .terminal-btn {
+        font-size: 14px;
+        padding: 10px 16px;
+      }
+
+      .miss-minutes-container {
+        width: 90px;
+        left: -10px;
+        bottom: -85px;
+      }
+
+      .leaderboard-table {
+        max-width: 100%;
+        font-size: 11px;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <div class="tva-monitor">
     <div class="tva-screen" id="tvaScreen">
-      
+
       <!-- ВЕРХ: РАДАР ВРЕМЕНИ -->
+
       <div class="timeline-panel">
-        <svg class="timeline-svg" viewBox="0 0 800 160" preserveAspectRatio="none">
-          <line x1="0" y1="80" x2="800" y2="80" stroke="rgba(255,176,0,0.15)" stroke-width="1"/>
-          <line x1="400" y1="0" x2="400" y2="160" stroke="rgba(255,176,0,0.15)" stroke-width="1"/>
-          <path class="sacred-path" d="M -50 80 Q 150 30 300 80 T 600 80 T 900 80" />
-          <path id="nexusBranch" class="nexus-branch" d="M 300 80 Q 450 150 700 130" />
+        <svg
+          class="timeline-svg"
+          viewBox="0 0 800 160"
+          preserveAspectRatio="none"
+        >
+          <line
+            x1="0"
+            y1="80"
+            x2="800"
+            y2="80"
+            stroke="rgba(255,176,0,0.15)"
+            stroke-width="1"
+          />
+
+          <line
+            x1="400"
+            y1="0"
+            x2="400"
+            y2="160"
+            stroke="rgba(255,176,0,0.15)"
+            stroke-width="1"
+          />
+
+          <path
+            class="sacred-path"
+            d="M -50 80 Q 150 30 300 80 T 600 80 T 900 80"
+          />
+
+          <path
+            id="nexusBranch"
+            class="nexus-branch"
+            d="M 300 80 Q 450 150 700 130"
+          />
         </svg>
+
         <div class="hud-top">
           <span id="hudSys">SYS.ARCHIVE // BR.616</span>
           <span id="scoreTop">VARS: 0/50</span>
@@ -242,177 +644,1376 @@
       <div class="scanlines"></div>
 
       <!-- НИЗ: КВИЗ ПАНЕЛЬ -->
+
       <div class="quiz-panel">
-        
+
         <!-- ЭКРАН 1: ВЫБОР ЯЗЫКА -->
-        <div id="langScreen" style="text-align:center; margin: auto;">
-          <h1 style="font-size:28px; margin-bottom:10px;">SELECT LANGUAGE PACKAGE</h1>
-          <p style="color:var(--tva-amber-dim); margin-bottom:30px;">ВЫБЕРИТЕ ЯЗЫКОВОЙ ПАКЕТ</p>
-          <div style="display: flex; gap: 15px; justify-content: center;">
-            <button class="terminal-btn" onclick="setLanguage('en')">ENGLISH</button>
-            <button class="terminal-btn" onclick="setLanguage('ru')">РУССКИЙ</button>
+
+        <div
+          id="langScreen"
+          style="text-align:center; margin:auto;"
+        >
+          <h1 style="font-size:28px; margin-bottom:10px;">
+            SELECT LANGUAGE PACKAGE
+          </h1>
+
+          <p
+            style="
+              color:var(--tva-amber-dim);
+              margin-bottom:30px;
+            "
+          >
+            ВЫБЕРИТЕ ЯЗЫКОВОЙ ПАКЕТ
+          </p>
+
+          <div
+            style="
+              display:flex;
+              gap:15px;
+              justify-content:center;
+            "
+          >
+            <button
+              class="terminal-btn"
+              onclick="setLanguage('en')"
+            >
+              ENGLISH
+            </button>
+
+            <button
+              class="terminal-btn"
+              onclick="setLanguage('ru')"
+            >
+              РУССКИЙ
+            </button>
           </div>
         </div>
 
         <!-- ЭКРАН 2: СТАРТ КВИЗА -->
-        <div id="startScreen" class="hidden" style="text-align:center; margin: auto;">
-          <h1 id="uiTitle" style="font-size:32px; margin-bottom:10px;">ДОСЬЕ</h1>
-          <p id="uiSubtitle" style="color:var(--tva-amber-dim); margin-bottom:40px;">ПОДТВЕРДИТЕ ДАННЫЕ.</p>
-          <button class="terminal-btn" id="uiBtnStart" onclick="startQuiz()">НАЧАТЬ</button>
+
+        <div
+          id="startScreen"
+          class="hidden"
+          style="text-align:center; margin:auto;"
+        >
+          <h1
+            id="uiTitle"
+            style="font-size:32px; margin-bottom:10px;"
+          >
+            ДОСЬЕ
+          </h1>
+
+          <p
+            id="uiSubtitle"
+            style="
+              color:var(--tva-amber-dim);
+              margin-bottom:40px;
+            "
+          >
+            ПОДТВЕРДИТЕ ДАННЫЕ.
+          </p>
+
+          <button
+            class="terminal-btn"
+            id="uiBtnStart"
+            onclick="startQuiz()"
+          >
+            НАЧАТЬ
+          </button>
         </div>
 
         <!-- ЭКРАН 3: ВОПРОСЫ -->
-        <div id="quizContainer" class="hidden" style="display:flex; flex-direction:column; height:100%;">
+
+        <div
+          id="quizContainer"
+          class="hidden"
+          style="
+            display:flex;
+            flex-direction:column;
+            height:100%;
+          "
+        >
           <div class="question-box">
-            <div class="qnum" id="qnum">ЗАПРОС 1 / 50</div>
-            <h1 id="question">Текст вопроса?</h1>
-            <div id="explainText" style="color:var(--tva-green); font-size:14px; margin-top:10px;" class="hidden"></div>
+
+            <div
+              class="qnum"
+              id="qnum"
+            >
+              ЗАПРОС 1 / 50
+            </div>
+
+            <h1 id="question">
+              Текст вопроса?
+            </h1>
+
+            <div
+              id="explainText"
+              style="
+                color:var(--tva-green);
+                font-size:14px;
+                margin-top:10px;
+              "
+              class="hidden"
+            ></div>
           </div>
-          <div class="answers" id="answers"></div>
-          <button class="terminal-btn right hidden" id="nextBtn" onclick="nextQuestion()">ДАЛЕЕ ></button>
+
+          <div
+            class="answers"
+            id="answers"
+          ></div>
+
+          <button
+            class="terminal-btn right hidden"
+            id="nextBtn"
+            onclick="nextQuestion()"
+          >
+            ДАЛЕЕ >
+          </button>
         </div>
 
-        <!-- ЭКРАН 4: РЕЗУЛЬТАТ И ВВОД ИМЕНИ -->
-        <div id="resultScreen" class="hidden" style="text-align:center; margin: auto;">
-          <div class="qnum" id="uiAnalysisComplete">АНАЛИЗ ЗАВЕРШЕН</div>
-          <h1 style="font-size: 60px; margin: 10px 0;" id="finalScore">0 / 50</h1>
-          <h2 id="rank" style="margin-bottom:10px; font-size: 24px;">СТАТУС</h2>
-          <p id="resultText" style="color:var(--tva-amber-dim); margin-bottom:20px; line-height: 1.4;"></p>
-          
-          <div id="leaderboardInputSection">
-            <p id="uiEnterName" style="margin-bottom: 10px; font-size: 14px;">ENTER VARIANT ID TO ARCHIVE RECORD:</p>
-            <input type="text" id="playerName" class="tva-input" placeholder="VARIANT ID" maxlength="12">
-            <br>
-            <button class="terminal-btn" id="uiBtnSave" onclick="saveScore()">СОХРАНИТЬ</button>
+        <!-- ЭКРАН 4: РЕЗУЛЬТАТ -->
+
+        <div
+          id="resultScreen"
+          class="hidden"
+          style="text-align:center; margin:auto;"
+        >
+          <div
+            class="qnum"
+            id="uiAnalysisComplete"
+          >
+            АНАЛИЗ ЗАВЕРШЕН
           </div>
 
-          <div id="leaderboardViewSection" class="hidden">
-            <h3 id="uiLbTitle" style="margin-top: 0; color: var(--tva-green);">ARCHIVE (TOP-10)</h3>
-            <table class="leaderboard-table" id="lbTable"></table>
-            <button class="terminal-btn" id="uiBtnRestart" onclick="restart()">ПЕРЕЗАГРУЗКА</button>
+          <h1
+            style="font-size:60px; margin:10px 0;"
+            id="finalScore"
+          >
+            0 / 50
+          </h1>
+
+          <h2
+            id="rank"
+            style="
+              margin-bottom:10px;
+              font-size:24px;
+            "
+          >
+            СТАТУС
+          </h2>
+
+          <p
+            id="resultText"
+            style="
+              color:var(--tva-amber-dim);
+              margin-bottom:20px;
+              line-height:1.4;
+            "
+          ></p>
+
+          <!-- ВВОД ИМЕНИ -->
+
+          <div id="leaderboardInputSection">
+
+            <p
+              id="uiEnterName"
+              style="
+                margin-bottom:10px;
+                font-size:14px;
+              "
+            >
+              ENTER VARIANT ID TO ARCHIVE RECORD:
+            </p>
+
+            <input
+              type="text"
+              id="playerName"
+              class="tva-input"
+              placeholder="VARIANT ID"
+              maxlength="30"
+              autocomplete="off"
+            >
+
+            <br>
+
+            <button
+              class="terminal-btn"
+              id="uiBtnSave"
+              onclick="saveScore()"
+            >
+              СОХРАНИТЬ
+            </button>
+          </div>
+
+          <!-- ЛИДЕРБОРД -->
+
+          <div
+            id="leaderboardViewSection"
+            class="hidden"
+          >
+            <h3
+              id="uiLbTitle"
+              style="
+                margin-top:0;
+                color:var(--tva-green);
+              "
+            >
+              ARCHIVE (TOP-10)
+            </h3>
+
+            <table
+              class="leaderboard-table"
+              id="lbTable"
+            ></table>
+
+            <button
+              class="terminal-btn"
+              id="uiBtnRestart"
+              onclick="restart()"
+            >
+              ПЕРЕЗАГРУЗКА
+            </button>
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- КАРТИНКА MISS MINUTES СЛЕВА -->
-    <div class="miss-minutes-container" id="missMinutes">
-      <img id="mmImage" src="miss_normal.png" alt="Miss Minutes">
+    <!-- MISS MINUTES -->
+
+    <div
+      class="miss-minutes-container"
+      id="missMinutes"
+    >
+      <img
+        id="mmImage"
+        src="miss_normal.png"
+        alt="Miss Minutes"
+      >
     </div>
   </div>
 
+
   <script>
-    // === БАЗЫ ВОПРОСОВ ===
+
+    /*
+     * ============================================================
+     * GOOGLE APPS SCRIPT — ONLINE LEADERBOARD
+     * ============================================================
+     *
+     * Используем именно Web App URL.
+     * URL библиотеки здесь НЕ нужен.
+     */
+
+    const LEADERBOARD_API =
+      'https://script.google.com/macros/s/AKfycbyPuYc7tXyg0i64wEyO9PXVuG6DM9OpJFGmJZGK3BxbZblp6DA78_7Xg0J-gJ4HbRQE/exec';
+
+
+    // ============================================================
+    // БАЗЫ ВОПРОСОВ
+    // ============================================================
+
     const db = {
+
       ru: [
-        ["С каким титулом Локи чаще всего ассоциируется в MCU?", ["Бог войны", "Бог озорства", "Бог грома", "Бог магии"], 1],
-        ["Какое оружие Локи часто использует в MCU?", ["Молот", "Лук", "Кинжалы", "Щит"], 2],
-        ["Какую способность Локи демонстрирует уже в фильме «Тор» (2011)?", ["Путешествие по Мультивселенной", "Создание иллюзий", "Управление временем", "Чтение мыслей"], 1],
-        ["Кого Локи пытается убить в фильме «Тор» (2011)?", ["Одина", "Тора", "Лафея", "Хеймдалля"], 2],
-        ["Что Локи делает с Биврёстом в конце фильма «Тор»?", ["Восстанавливает его", "Разрушает его", "Замораживает его", "Отправляет его на Землю"], 1],
-        ["Что Локи делает во время кульминации фильма «Тор: Рагнарёк»?", ["Сражается с Тором", "Помогает Тору спасти асгардцев", "Становится правителем Сакаара", "Разрушает Биврёст"], 1],
-        ["Что Мобиус предлагает Локи делать в TVA?", ["Стать судьёй TVA", "Помочь расследовать дело опасного Варианта", "Вернуться в Асгард", "Найти Тессеракт"], 1],
-        ["Кто такая Сильвия?", ["Вариант Тора", "Вариант Локи", "Вариант Мобиуса", "Вариант Равонны Ренслейер"], 1],
-        ["Что общего у Локи и Сильвии?", ["Они оба сотрудники TVA", "Они оба варианты Локи", "Они оба дети Одина", "Они оба происходят из одной временной линии"], 1],
-        ["Какой вариант Локи имеет форму крокодила?", ["Классический Локи", "Ребёнок Локи", "Локи-аллигатор", "Президент Локи"], 2],
-        ["Какой вариант Локи создаёт огромную иллюзию Асгарда в Пустоте?", ["Ребёнок Локи", "Классический Локи", "Хвастливый Локи", "Президент Локи"], 1],
-        ["Куда попадает Локи после того, как TVA его «обрезает»?", ["В Асгард", "На Землю", "В Пустоту", "В Цитадель"], 2],
-        ["Какое существо угрожает Локи и другим вариантам в Пустоте?", ["Дормамму", "Алиот", "Суртур", "Фенрис"], 1],
-        ["Что Локи видит, когда TVA показывает ему записи его жизни?", ["Только события в Асгарде", "События его прошлого и будущего", "Только события, связанные с Тором", "События XXXI века"], 1],
-        ["Что происходит с магией Локи внутри TVA?", ["Она становится сильнее", "Она не работает нормально", "Работают только иллюзии", "Она изменяет людям память"], 1],
-        ["Под какой исторической личностью Локи выступает в 1971 году?", ["Чарльз Мэнсон", "Ди Би Купер", "Элвис Пресли", "Говард Хьюз"], 1],
-        ["Почему, согласно Локи, он стал Ди Би Купером?", ["Он хотел украсть Тессеракт", "Он проиграл спор Тору", "Один приказал ему это сделать", "Он скрывался от TVA"], 1],
-        ["Что происходит после того, как Локи оказывается в Пустоте?", ["Он встречает несколько своих вариантов", "Он сразу встречает Того, кто остаётся", "Он находит Тора", "Он возвращается в Асгард"], 0],
-        ["Кто играет Локи в MCU?", ["Крис Хемсворт", "Том Хиддлстон", "Бенедикт Камбербэтч", "Мэтт Дэймон"], 1],
-        ["Какая деталь является одной из самых узнаваемых частей классического костюма Локи?", ["Серебряный плащ", "Золотой шлем с рогами", "Синяя маска", "Красная корона"], 1],
-        ["Какая особенность характерна для классического образа Локи в MCU?", ["Длинные чёрные волосы", "Короткие светлые волосы", "Белые волосы", "Рыжие волосы"], 0],
-        ["В каком фильме Том Хиддлстон впервые появился в роли Локи?", ["«Мстители»", "«Тор»", "«Тор 2: Царство тьмы»", "«Железный человек 2»"], 1],
-        ["В каком фильме Локи становится главным противником Мстителей?", ["«Тор»", "«Тор 2: Царство тьмы»", "«Мстители»", "«Тор: Рагнарёк»"], 2],
-        ["Кто играет Локи в театральной постановке в «Тор: Рагнарёк»?", ["Крис Хемсворт", "Том Хиддлстон", "Мэтт Дэймон", "Сэм Нилл"], 2],
-        ["Кого Мэтт Дэймон играет в этой театральной постановке?", ["Тора", "Одина", "Локи", "Хеймдалля"], 2],
-        ["Какой вариант Локи известен как Президент Локи?", ["Локи, который возглавляет TVA", "Локи, который становится президентом в другой временной линии", "Локи, который правит Асгардом", "Локи, который становится судьёй TVA"], 1],
-        ["Как зовут инженера TVA, представленного во втором сезоне?", ["Виктор Таймли", "Уроборос", "Кейси", "Охотник X-5"], 1],
-        ["Кто такой Виктор Таймли?", ["Вариант Того, кто остаётся", "Вариант Локи", "Судья TVA", "Хранитель времени"], 0],
-        ["Как называется финальная серия второго сезона?", ["«For All Time. Always.»", "«Glorious Purpose»", "«The End of Time»", "«Heart of the TVA»"], 1],
-        ["Что Локи в итоге делает с разветвляющимися временными линиями в конце второго сезона?", ["Уничтожает их", "Возвращает их в TVA", "Берёт на себя ответственность за их сохранение", "Передаёт их Тому, кто остаётся"], 2],
-        ["Какой предмет Локи использует, чтобы сбежать от Мстителей во время событий 2012 года?", ["Скипетр", "Тессеракт", "Камень Времени", "Камень Реальности"], 1],
-        ["Куда Локи попадает после побега с Тессерактом в 2012 году?", ["В Нью-Йорк", "В пустыню Гоби", "В Асгард", "На Вормир"], 1],
-        ["Кто арестовывает Локи вскоре после его появления в пустыне Гоби?", ["Мобиус", "Равонна Ренслейер", "Охотник B-15", "Сильвия"], 2],
-        ["Как TVA называет Локи после его побега от Мстителей в 2012 году?", ["Хранитель времени", "Временной вариант", "Хранитель Временной линии", "Страж временной линии"], 1],
-        ["Что происходит с Камнями Бесконечности внутри TVA?", ["Они становятся сильнее", "Они перестают работать", "Они превращаются в оружие", "Они создают новые временные линии"], 1],
-        ["Кто является судьёй на процессе Локи в TVA?", ["Охотник B-15", "Сильвия", "Равонна Ренслейер", "Мисс Минуты"], 2],
-        ["Кем на самом деле оказываются Хранители времени?", ["Настоящими космическими богами", "Могущественными вариантами Локи", "Роботизированными куклами", "Основателями TVA с Земли"], 2],
-        ["Что Сильвия использует, чтобы получить контроль над Алиотом?", ["Темпад", "Зачарование", "Тессеракт", "Камень Времени"], 1],
-        ["В каком году происходят события на Ламентис-1?", ["1971", "1985", "2050", "2077"], 3],
-        ["В каком месте происходит эвакуация, когда Локи и Сильвия прибывают в 2050 году?", ["Roxxcart", "Башня Старка", "Цитадель", "TVA"], 0],
-        ["Какая проблема возникает у Локи в начале второго сезона?", ["Он теряет магию", "Он начинает проваливаться во времени", "Он теряет память", "Он оказывается заперт в Пустоте"], 1],
-        ["Кто помогает Локи понять и исправить проблему с перемещением во времени?", ["Виктор Таймли", "Уроборос", "Тот, кто остаётся", "Охотник X-5"], 1],
-        ["Какой профессией занимался Виктор Таймли?", ["Солдат", "Изобретатель", "Судья TVA", "Астроном"], 1],
-        ["Кто из сотрудников TVA оказывается человеком по имени Кейси?", ["Охотник B-15", "Мобиус", "Кейси", "Брэд Вулф"], 2],
-        ["Кто такой Брэд Вулф?", ["Имя Охотника X-5 на временной линии", "Вариант Локи", "Инженер TVA", "Помощник Виктора Таймли"], 0],
-        ["Что такое Мисс Минуты?", ["Сотрудница TVA из будущего", "Искусственный интеллект в виде оживших часов", "Хранитель времени", "Вариант Сильвии"], 1],
-        ["Где живёт Тот, кто остаётся?", ["В Пустоте", "В Асгарде", "В Цитадели в конце времени", "В архивах TVA"], 2],
-        ["Что происходит с Хранителями времени после того, как Локи и Сильвия узнают правду о них?", ["Они сбегают", "Они раскрывают свои настоящие личности", "Выясняется, что они роботизированные куклы", "Они становятся вариантами"], 2],
-        ["Какого персонажа играет Ке Хюи Куан во втором сезоне?", ["Виктора Таймли", "Уробороса", "Брэда Вулфа", "Того, кто остаётся"], 1],
-        ["Что Локи неоднократно пытается сделать в финале второго сезона перед своим окончательным выбором?", ["Уничтожить TVA", "Спасти Временной ткацкий станок и разветвляющиеся временные линии", "Найти Сильвию", "Стать правителем TVA"], 1]
+
+        [
+          "С каким титулом Локи чаще всего ассоциируется в MCU?",
+          ["Бог войны", "Бог озорства", "Бог грома", "Бог магии"],
+          1
+        ],
+
+        [
+          "Какое оружие Локи часто использует в MCU?",
+          ["Молот", "Лук", "Кинжалы", "Щит"],
+          2
+        ],
+
+        [
+          "Какую способность Локи демонстрирует уже в фильме «Тор» (2011)?",
+          [
+            "Путешествие по Мультивселенной",
+            "Создание иллюзий",
+            "Управление временем",
+            "Чтение мыслей"
+          ],
+          1
+        ],
+
+        [
+          "Кого Локи пытается убить в фильме «Тор» (2011)?",
+          ["Одина", "Тора", "Лафея", "Хеймдалля"],
+          2
+        ],
+
+        [
+          "Что Локи делает с Биврёстом в конце фильма «Тор»?",
+          [
+            "Восстанавливает его",
+            "Разрушает его",
+            "Замораживает его",
+            "Отправляет его на Землю"
+          ],
+          1
+        ],
+
+        [
+          "Что Локи делает во время кульминации фильма «Тор: Рагнарёк»?",
+          [
+            "Сражается с Тором",
+            "Помогает Тору спасти асгардцев",
+            "Становится правителем Сакаара",
+            "Разрушает Биврёст"
+          ],
+          1
+        ],
+
+        [
+          "Что Мобиус предлагает Локи делать в TVA?",
+          [
+            "Стать судьёй TVA",
+            "Помочь расследовать дело опасного Варианта",
+            "Вернуться в Асгард",
+            "Найти Тессеракт"
+          ],
+          1
+        ],
+
+        [
+          "Кто такая Сильвия?",
+          [
+            "Вариант Тора",
+            "Вариант Локи",
+            "Вариант Мобиуса",
+            "Вариант Равонны Ренслейер"
+          ],
+          1
+        ],
+
+        [
+          "Что общего у Локи и Сильвии?",
+          [
+            "Они оба сотрудники TVA",
+            "Они оба варианты Локи",
+            "Они оба дети Одина",
+            "Они оба происходят из одной временной линии"
+          ],
+          1
+        ],
+
+        [
+          "Какой вариант Локи имеет форму крокодила?",
+          [
+            "Классический Локи",
+            "Ребёнок Локи",
+            "Локи-аллигатор",
+            "Президент Локи"
+          ],
+          2
+        ],
+
+        [
+          "Какой вариант Локи создаёт огромную иллюзию Асгарда в Пустоте?",
+          [
+            "Ребёнок Локи",
+            "Классический Локи",
+            "Хвастливый Локи",
+            "Президент Локи"
+          ],
+          1
+        ],
+
+        [
+          "Куда попадает Локи после того, как TVA его «обрезает»?",
+          [
+            "В Асгард",
+            "На Землю",
+            "В Пустоту",
+            "В Цитадель"
+          ],
+          2
+        ],
+
+        [
+          "Какое существо угрожает Локи и другим вариантам в Пустоте?",
+          [
+            "Дормамму",
+            "Алиот",
+            "Суртур",
+            "Фенрис"
+          ],
+          1
+        ],
+
+        [
+          "Что Локи видит, когда TVA показывает ему записи его жизни?",
+          [
+            "Только события в Асгарде",
+            "События его прошлого и будущего",
+            "Только события, связанные с Тором",
+            "События XXXI века"
+          ],
+          1
+        ],
+
+        [
+          "Что происходит с магией Локи внутри TVA?",
+          [
+            "Она становится сильнее",
+            "Она не работает нормально",
+            "Работают только иллюзии",
+            "Она изменяет людям память"
+          ],
+          1
+        ],
+
+        [
+          "Под какой исторической личностью Локи выступает в 1971 году?",
+          [
+            "Чарльз Мэнсон",
+            "Ди Би Купер",
+            "Элвис Пресли",
+            "Говард Хьюз"
+          ],
+          1
+        ],
+
+        [
+          "Почему, согласно Локи, он стал Ди Би Купером?",
+          [
+            "Он хотел украсть Тессеракт",
+            "Он проиграл спор Тору",
+            "Один приказал ему это сделать",
+            "Он скрывался от TVA"
+          ],
+          1
+        ],
+
+        [
+          "Что происходит после того, как Локи оказывается в Пустоте?",
+          [
+            "Он встречает несколько своих вариантов",
+            "Он сразу встречает Того, кто остаётся",
+            "Он находит Тора",
+            "Он возвращается в Асгард"
+          ],
+          0
+        ],
+
+        [
+          "Кто играет Локи в MCU?",
+          [
+            "Крис Хемсворт",
+            "Том Хиддлстон",
+            "Бенедикт Камбербэтч",
+            "Мэтт Дэймон"
+          ],
+          1
+        ],
+
+        [
+          "Какая деталь является одной из самых узнаваемых частей классического костюма Локи?",
+          [
+            "Серебряный плащ",
+            "Золотой шлем с рогами",
+            "Синяя маска",
+            "Красная корона"
+          ],
+          1
+        ],
+
+        [
+          "Какая особенность характерна для классического образа Локи в MCU?",
+          [
+            "Длинные чёрные волосы",
+            "Короткие светлые волосы",
+            "Белые волосы",
+            "Рыжие волосы"
+          ],
+          0
+        ],
+
+        [
+          "В каком фильме Том Хиддлстон впервые появился в роли Локи?",
+          [
+            "«Мстители»",
+            "«Тор»",
+            "«Тор 2: Царство тьмы»",
+            "«Железный человек 2»"
+          ],
+          1
+        ],
+
+        [
+          "В каком фильме Локи становится главным противником Мстителей?",
+          [
+            "«Тор»",
+            "«Тор 2: Царство тьмы»",
+            "«Мстители»",
+            "«Тор: Рагнарёк»"
+          ],
+          2
+        ],
+
+        [
+          "Кто играет Локи в театральной постановке в «Тор: Рагнарёк»?",
+          [
+            "Крис Хемсворт",
+            "Том Хиддлстон",
+            "Мэтт Дэймон",
+            "Сэм Нилл"
+          ],
+          2
+        ],
+
+        [
+          "Кого Мэтт Дэймон играет в этой театральной постановке?",
+          [
+            "Тора",
+            "Одина",
+            "Локи",
+            "Хеймдалля"
+          ],
+          2
+        ],
+
+        [
+          "Какой вариант Локи известен как Президент Локи?",
+          [
+            "Локи, который возглавляет TVA",
+            "Локи, который становится президентом в другой временной линии",
+            "Локи, который правит Асгардом",
+            "Локи, который становится судьёй TVA"
+          ],
+          1
+        ],
+
+        [
+          "Как зовут инженера TVA, представленного во втором сезоне?",
+          [
+            "Виктор Таймли",
+            "Уроборос",
+            "Кейси",
+            "Охотник X-5"
+          ],
+          1
+        ],
+
+        [
+          "Кто такой Виктор Таймли?",
+          [
+            "Вариант Того, кто остаётся",
+            "Вариант Локи",
+            "Судья TVA",
+            "Хранитель времени"
+          ],
+          0
+        ],
+
+        [
+          "Как называется финальная серия второго сезона?",
+          [
+            "«For All Time. Always.»",
+            "«Glorious Purpose»",
+            "«The End of Time»",
+            "«Heart of the TVA»"
+          ],
+          1
+        ],
+
+        [
+          "Что Локи в итоге делает с разветвляющимися временными линиями в конце второго сезона?",
+          [
+            "Уничтожает их",
+            "Возвращает их в TVA",
+            "Берёт на себя ответственность за их сохранение",
+            "Передаёт их Тому, кто остаётся"
+          ],
+          2
+        ],
+
+        [
+          "Какой предмет Локи использует, чтобы сбежать от Мстителей во время событий 2012 года?",
+          [
+            "Скипетр",
+            "Тессеракт",
+            "Камень Времени",
+            "Камень Реальности"
+          ],
+          1
+        ],
+
+        [
+          "Куда Локи попадает после побега с Тессерактом в 2012 году?",
+          [
+            "В Нью-Йорк",
+            "В пустыню Гоби",
+            "В Асгард",
+            "На Вормир"
+          ],
+          1
+        ],
+
+        [
+          "Кто арестовывает Локи вскоре после его появления в пустыне Гоби?",
+          [
+            "Мобиус",
+            "Равонна Ренслейер",
+            "Охотник B-15",
+            "Сильвия"
+          ],
+          2
+        ],
+
+        [
+          "Как TVA называет Локи после его побега от Мстителей в 2012 году?",
+          [
+            "Хранитель времени",
+            "Временной вариант",
+            "Хранитель Временной линии",
+            "Страж временной линии"
+          ],
+          1
+        ],
+
+        [
+          "Что происходит с Камнями Бесконечности внутри TVA?",
+          [
+            "Они становятся сильнее",
+            "Они перестают работать",
+            "Они превращаются в оружие",
+            "Они создают новые временные линии"
+          ],
+          1
+        ],
+
+        [
+          "Кто является судьёй на процессе Локи в TVA?",
+          [
+            "Охотник B-15",
+            "Сильвия",
+            "Равонна Ренслейер",
+            "Мисс Минуты"
+          ],
+          2
+        ],
+
+        [
+          "Кем на самом деле оказываются Хранители времени?",
+          [
+            "Настоящими космическими богами",
+            "Могущественными вариантами Локи",
+            "Роботизированными куклами",
+            "Основателями TVA с Земли"
+          ],
+          2
+        ],
+
+        [
+          "Что Сильвия использует, чтобы получить контроль над Алиотом?",
+          [
+            "Темпад",
+            "Зачарование",
+            "Тессеракт",
+            "Камень Времени"
+          ],
+          1
+        ],
+
+        [
+          "В каком году происходят события на Ламентис-1?",
+          [
+            "1971",
+            "1985",
+            "2050",
+            "2077"
+          ],
+          3
+        ],
+
+        [
+          "В каком месте происходит эвакуация, когда Локи и Сильвия прибывают в 2050 году?",
+          [
+            "Roxxcart",
+            "Башня Старка",
+            "Цитадель",
+            "TVA"
+          ],
+          0
+        ],
+
+        [
+          "Какая проблема возникает у Локи в начале второго сезона?",
+          [
+            "Он теряет магию",
+            "Он начинает проваливаться во времени",
+            "Он теряет память",
+            "Он оказывается заперт в Пустоте"
+          ],
+          1
+        ],
+
+        [
+          "Кто помогает Локи понять и исправить проблему с перемещением во времени?",
+          [
+            "Виктор Таймли",
+            "Уроборос",
+            "Тот, кто остаётся",
+            "Охотник X-5"
+          ],
+          1
+        ],
+
+        [
+          "Какой профессией занимался Виктор Таймли?",
+          [
+            "Солдат",
+            "Изобретатель",
+            "Судья TVA",
+            "Астроном"
+          ],
+          1
+        ],
+
+        [
+          "Какое настоящее имя сотрудника TVA Кейси?",
+          [
+            "Фрэнк Моррис",
+            "Мобиус",
+            "Брэд Вулф",
+            "Хантер B-15"
+          ],
+          0
+        ],
+
+        [
+          "Кто такой Брэд Вулф?",
+          [
+            "Имя Охотника X-5 на временной линии",
+            "Вариант Локи",
+            "Инженер TVA",
+            "Помощник Виктора Таймли"
+          ],
+          0
+        ],
+
+        [
+          "Что такое Мисс Минуты?",
+          [
+            "Сотрудница TVA из будущего",
+            "Искусственный интеллект в виде оживших часов",
+            "Хранитель времени",
+            "Вариант Сильвии"
+          ],
+          1
+        ],
+
+        [
+          "Где живёт Тот, кто остаётся?",
+          [
+            "В Пустоте",
+            "В Асгарде",
+            "В Цитадели в конце времени",
+            "В архивах TVA"
+          ],
+          2
+        ],
+
+        [
+          "Что происходит с Хранителями времени после того, как Локи и Сильвия узнают правду о них?",
+          [
+            "Они сбегают",
+            "Они раскрывают свои настоящие личности",
+            "Выясняется, что они роботизированные куклы",
+            "Они становятся вариантами"
+          ],
+          2
+        ],
+
+        [
+          "Какого персонажа играет Ке Хюи Куан во втором сезоне?",
+          [
+            "Виктора Таймли",
+            "Уробороса",
+            "Брэда Вулфа",
+            "Того, кто остаётся"
+          ],
+          1
+        ],
+
+        [
+          "Что Локи неоднократно пытается сделать в финале второго сезона перед своим окончательным выбором?",
+          [
+            "Уничтожить TVA",
+            "Спасти Временной ткацкий станок и разветвляющиеся временные линии",
+            "Найти Сильвию",
+            "Стать правителем TVA"
+          ],
+          1
+        ]
       ],
+
       en: [
-        ["What title is Loki most commonly associated with in the MCU?", ["God of War", "God of Mischief", "God of Thunder", "God of Magic"], 1],
-        ["Which weapon does Loki frequently use in the MCU?", ["Hammer", "Bow", "Daggers", "Shield"], 2],
-        ["Which ability does Loki demonstrate as early as Thor (2011)?", ["Teleportation through the Multiverse", "Creating illusions", "Controlling time", "Reading minds"], 1],
-        ["Whom does Loki attempt to kill in Thor (2011)?", ["Odin", "Thor", "Laufey", "Heimdall"], 2],
-        ["What does Loki do to the Bifrost at the end of Thor (2011)?", ["He repairs it", "He destroys it", "He freezes it", "He sends it to Earth"], 1],
-        ["What does Loki do during the climax of Thor: Ragnarok?", ["He fights Thor", "He helps Thor save the Asgardians", "He becomes ruler of Sakaar", "He destroys the Bifrost"], 1],
-        ["What does Mobius ask Loki to do at the TVA?", ["Become a TVA judge", "Help investigate the dangerous Variant", "Return to Asgard", "Find the Tesseract"], 1],
-        ["Which Loki variant is known as Sylvie?", ["A variant of Thor", "A variant of Loki", "A variant of Mobius", "A variant of Ravonna Renslayer"], 1],
-        ["What do Loki and Sylvie have in common?", ["They are both TVA agents", "They are both variants of Loki", "They are both children of Odin", "They are both from the same timeline"], 1],
-        ["Which Loki variant has the form of a crocodile?", ["Classic Loki", "Kid Loki", "Alligator Loki", "President Loki"], 2],
-        ["Which Loki variant creates a giant illusion of Asgard in the Void?", ["Kid Loki", "Classic Loki", "Boastful Loki", "President Loki"], 1],
-        ["Where does Loki end up after being pruned by the TVA?", ["Asgard", "Earth", "The Void", "The Citadel"], 2],
-        ["What creature threatens Loki and the other variants in the Void?", ["Dormammu", "Alioth", "Surtur", "Fenris"], 1],
-        ["What does Loki see when the TVA shows him footage of his life?", ["Only events from Asgard", "Events from his past and future", "Only events involving Thor", "Events from the 31st century"], 1],
-        ["What happens to Loki's magic inside the TVA?", ["It becomes stronger", "It does not work normally", "Only illusions still work", "It changes people's memories"], 1],
-        ["What historical identity does Loki claim to have taken on in 1971?", ["Charles Manson", "D.B. Cooper", "Elvis Presley", "Howard Hughes"], 1],
-        ["According to Loki, why did he become D.B. Cooper?", ["He wanted to steal the Tesseract", "He lost a bet with Thor", "Odin ordered him to do it", "He was escaping the TVA"], 1],
-        ["What happens after Loki arrives in the Void?", ["He meets several variants of himself", "He immediately meets He Who Remains", "He finds Thor", "He returns to Asgard"], 0],
-        ["Who plays Loki in the MCU?", ["Chris Hemsworth", "Tom Hiddleston", "Benedict Cumberbatch", "Matt Damon"], 1],
-        ["Which item is one of the most recognizable parts of Loki's classic costume?", ["A silver cape", "A golden horned helmet", "A blue mask", "A red crown"], 1],
-        ["Which feature is characteristic of Loki's classic MCU appearance?", ["Long black hair", "Short blond hair", "White hair", "Red hair"], 0],
-        ["Which film first introduced Tom Hiddleston as Loki?", ["The Avengers", "Thor", "Thor: The Dark World", "Iron Man 2"], 1],
-        ["In which film does Loki become the main antagonist facing the Avengers?", ["Thor", "Thor: The Dark World", "The Avengers", "Thor: Ragnarok"], 2],
-        ["Who plays Loki in the Asgardian stage play in Thor: Ragnarok?", ["Chris Hemsworth", "Tom Hiddleston", "Matt Damon", "Sam Neill"], 2],
-        ["Which character does Matt Damon play in that stage production?", ["Thor", "Odin", "Loki", "Heimdall"], 2],
-        ["Which Loki variant is known as President Loki?", ["A Loki who leads the TVA", "A Loki who becomes president in another timeline", "A Loki who rules Asgard", "A Loki who becomes a TVA judge"], 1],
-        ["What is the name of the TVA engineer introduced in Season 2?", ["Victor Timely", "Ouroboros", "Casey", "Hunter X-5"], 1],
-        ["Who is Victor Timely?", ["A variant of He Who Remains", "A variant of Loki", "A TVA judge", "A Time-Keeper"], 0],
-        ["What is the title of the Season 2 finale?", ["For All Time. Always.", "Glorious Purpose", "The End of Time", "Heart of the TVA"], 1],
-        ["What does Loki ultimately do with the branching timelines at the end of Season 2?", ["He destroys them", "He sends them back to the TVA", "He takes responsibility for keeping them together", "He gives them to He Who Remains"], 2],
-        ["What object does Loki use to escape from the Avengers during the 2012 time heist?", ["The Scepter", "The Tesseract", "The Time Stone", "The Reality Stone"], 1],
-        ["Where does Loki land after escaping with the Tesseract in 2012?", ["New York City", "The Gobi Desert", "Asgard", "Vormir"], 1],
-        ["Who arrests Loki shortly after he arrives in the Gobi Desert?", ["Mobius", "Ravonna Renslayer", "Hunter B-15", "Sylvie"], 2],
-        ["What does the TVA call Loki after his escape from the Avengers' 2012 operation?", ["A Time-Keeper", "A Temporal Variant", "A Nexus Guardian", "A Timeline Warden"], 1],
-        ["What happens to the Infinity Stones inside the TVA?", ["They become more powerful", "They stop working", "They turn into weapons", "They create new timelines"], 1],
-        ["Who is the judge who presides over Loki's trial at the TVA?", ["Hunter B-15", "Sylvie", "Ravonna Renslayer", "Miss Minutes"], 2],
-        ["What are the Time-Keepers revealed to be?", ["Real cosmic gods", "Powerful variants of Loki", "Robotic puppets", "TVA founders from Earth"], 2],
-        ["What does Sylvie use to gain control over Alioth?", ["A Tempad", "Enchantment", "The Tesseract", "The Time Stone"], 1],
-        ["In which year does the Lamentis-1 event take place?", ["1971", "1985", "2050", "2077"], 3],
-        ["What location is being evacuated when Loki and Sylvie arrive in 2050?", ["Roxxcart", "Stark Tower", "The Citadel", "The TVA"], 0],
-        ["What problem does Loki experience at the beginning of Season 2?", ["He loses his magic", "He begins time-slipping", "He loses his memories", "He becomes trapped in the Void"], 1],
-        ["Who helps Loki understand and fix his time-slipping problem?", ["Victor Timely", "Ouroboros", "He Who Remains", "Hunter X-5"], 1],
-        ["What was Victor Timely's profession?", ["Soldier", "Inventor", "TVA judge", "Astronomer"], 1],
-        ["Which TVA employee is revealed to have the real name Casey?", ["Hunter B-15", "Mobius", "Casey", "Brad Wolfe"], 2],
-        ["Who is Brad Wolfe?", ["Hunter X-5's identity on the timeline", "A variant of Loki", "A TVA engineer", "Victor Timely's assistant"], 0],
-        ["What is Miss Minutes?", ["A TVA employee from the future", "An artificial intelligence represented as an animated clock", "A Time-Keeper", "A variant of Sylvie"], 1],
-        ["Where does He Who Remains live?", ["The Void", "Asgard", "The Citadel at the End of Time", "The TVA Archives"], 2],
-        ["What happens to the Time-Keepers after Sylvie and Loki discover the truth about them?", ["They escape", "They reveal their true identities", "They are exposed as robotic puppets", "They become variants"], 2],
-        ["Which character is played by Ke Huy Quan in Season 2?", ["Victor Timely", "Ouroboros", "Brad Wolfe", "He Who Remains"], 1],
-        ["What does Loki do repeatedly in the Season 2 finale before making his final choice?", ["He tries to destroy the TVA", "He attempts to save the Temporal Loom and the branching timelines", "He searches for Sylvie", "He tries to become ruler of the TVA"], 1]
+
+        [
+          "What title is Loki most commonly associated with in the MCU?",
+          [
+            "God of War",
+            "God of Mischief",
+            "God of Thunder",
+            "God of Magic"
+          ],
+          1
+        ],
+
+        [
+          "Which weapon does Loki frequently use in the MCU?",
+          [
+            "Hammer",
+            "Bow",
+            "Daggers",
+            "Shield"
+          ],
+          2
+        ],
+
+        [
+          "Which ability does Loki demonstrate as early as Thor (2011)?",
+          [
+            "Teleportation through the Multiverse",
+            "Creating illusions",
+            "Controlling time",
+            "Reading minds"
+          ],
+          1
+        ],
+
+        [
+          "Whom does Loki attempt to kill in Thor (2011)?",
+          [
+            "Odin",
+            "Thor",
+            "Laufey",
+            "Heimdall"
+          ],
+          2
+        ],
+
+        [
+          "What does Loki do to the Bifrost at the end of Thor (2011)?",
+          [
+            "He repairs it",
+            "He destroys it",
+            "He freezes it",
+            "He sends it to Earth"
+          ],
+          1
+        ],
+
+        [
+          "What does Loki do during the climax of Thor: Ragnarok?",
+          [
+            "He fights Thor",
+            "He helps Thor save the Asgardians",
+            "He becomes ruler of Sakaar",
+            "He destroys the Bifrost"
+          ],
+          1
+        ],
+
+        [
+          "What does Mobius ask Loki to do at the TVA?",
+          [
+            "Become a TVA judge",
+            "Help investigate the dangerous Variant",
+            "Return to Asgard",
+            "Find the Tesseract"
+          ],
+          1
+        ],
+
+        [
+          "Which Loki variant is known as Sylvie?",
+          [
+            "A variant of Thor",
+            "A variant of Loki",
+            "A variant of Mobius",
+            "A variant of Ravonna Renslayer"
+          ],
+          1
+        ],
+
+        [
+          "What do Loki and Sylvie have in common?",
+          [
+            "They are both TVA agents",
+            "They are both variants of Loki",
+            "They are both children of Odin",
+            "They are both from the same timeline"
+          ],
+          1
+        ],
+
+        [
+          "Which Loki variant has the form of a crocodile?",
+          [
+            "Classic Loki",
+            "Kid Loki",
+            "Alligator Loki",
+            "President Loki"
+          ],
+          2
+        ],
+
+        [
+          "Which Loki variant creates a giant illusion of Asgard in the Void?",
+          [
+            "Kid Loki",
+            "Classic Loki",
+            "Boastful Loki",
+            "President Loki"
+          ],
+          1
+        ],
+
+        [
+          "Where does Loki end up after being pruned by the TVA?",
+          [
+            "Asgard",
+            "Earth",
+            "The Void",
+            "The Citadel"
+          ],
+          2
+        ],
+
+        [
+          "What creature threatens Loki and the other variants in the Void?",
+          [
+            "Dormammu",
+            "Alioth",
+            "Surtur",
+            "Fenris"
+          ],
+          1
+        ],
+
+        [
+          "What does Loki see when the TVA shows him footage of his life?",
+          [
+            "Only events from Asgard",
+            "Events from his past and future",
+            "Only events involving Thor",
+            "Events from the 31st century"
+          ],
+          1
+        ],
+
+        [
+          "What happens to Loki's magic inside the TVA?",
+          [
+            "It becomes stronger",
+            "It does not work normally",
+            "Only illusions still work",
+            "It changes people's memories"
+          ],
+          1
+        ],
+
+        [
+          "What historical identity does Loki claim to have taken on in 1971?",
+          [
+            "Charles Manson",
+            "D.B. Cooper",
+            "Elvis Presley",
+            "Howard Hughes"
+          ],
+          1
+        ],
+
+        [
+          "According to Loki, why did he become D.B. Cooper?",
+          [
+            "He wanted to steal the Tesseract",
+            "He lost a bet with Thor",
+            "Odin ordered him to do it",
+            "He was escaping the TVA"
+          ],
+          1
+        ],
+
+        [
+          "What happens after Loki arrives in the Void?",
+          [
+            "He meets several variants of himself",
+            "He immediately meets He Who Remains",
+            "He finds Thor",
+            "He returns to Asgard"
+          ],
+          0
+        ],
+
+        [
+          "Who plays Loki in the MCU?",
+          [
+            "Chris Hemsworth",
+            "Tom Hiddleston",
+            "Benedict Cumberbatch",
+            "Matt Damon"
+          ],
+          1
+        ],
+
+        [
+          "Which item is one of the most recognizable parts of Loki's classic costume?",
+          [
+            "A silver cape",
+            "A golden horned helmet",
+            "A blue mask",
+            "A red crown"
+          ],
+          1
+        ],
+
+        [
+          "Which feature is characteristic of Loki's classic MCU appearance?",
+          [
+            "Long black hair",
+            "Short blond hair",
+            "White hair",
+            "Red hair"
+          ],
+          0
+        ],
+
+        [
+          "Which film first introduced Tom Hiddleston as Loki?",
+          [
+            "The Avengers",
+            "Thor",
+            "Thor: The Dark World",
+            "Iron Man 2"
+          ],
+          1
+        ],
+
+        [
+          "In which film does Loki become the main antagonist facing the Avengers?",
+          [
+            "Thor",
+            "Thor: The Dark World",
+            "The Avengers",
+            "Thor: Ragnarok"
+          ],
+          2
+        ],
+
+        [
+          "Who plays Loki in the Asgardian stage play in Thor: Ragnarok?",
+          [
+            "Chris Hemsworth",
+            "Tom Hiddleston",
+            "Matt Damon",
+            "Sam Neill"
+          ],
+          2
+        ],
+
+        [
+          "Which character does Matt Damon play in that stage production?",
+          [
+            "Thor",
+            "Odin",
+            "Loki",
+            "Heimdall"
+          ],
+          2
+        ],
+
+        [
+          "Which Loki variant is known as President Loki?",
+          [
+            "A Loki who leads the TVA",
+            "A Loki who becomes president in another timeline",
+            "A Loki who rules Asgard",
+            "A Loki who becomes a TVA judge"
+          ],
+          1
+        ],
+
+        [
+          "What is the name of the TVA engineer introduced in Season 2?",
+          [
+            "Victor Timely",
+            "Ouroboros",
+            "Casey",
+            "Hunter X-5"
+          ],
+          1
+        ],
+
+        [
+          "Who is Victor Timely?",
+          [
+            "A variant of He Who Remains",
+            "A variant of Loki",
+            "A TVA judge",
+            "A Time-Keeper"
+          ],
+          0
+        ],
+
+        [
+          "What is the title of the Season 2 finale?",
+          [
+            "For All Time. Always.",
+            "Glorious Purpose",
+            "The End of Time",
+            "Heart of the TVA"
+          ],
+          1
+        ],
+
+        [
+          "What does Loki ultimately do with the branching timelines at the end of Season 2?",
+          [
+            "He destroys them",
+            "He sends them back to the TVA",
+            "He takes responsibility for keeping them together",
+            "He gives them to He Who Remains"
+          ],
+          2
+        ],
+
+        [
+          "What object does Loki use to escape from the Avengers during the 2012 time heist?",
+          [
+            "The Scepter",
+            "The Tesseract",
+            "The Time Stone",
+            "The Reality Stone"
+          ],
+          1
+        ],
+
+        [
+          "Where does Loki land after escaping with the Tesseract in 2012?",
+          [
+            "New York City",
+            "The Gobi Desert",
+            "Asgard",
+            "Vormir"
+          ],
+          1
+        ],
+
+        [
+          "Who arrests Loki shortly after he arrives in the Gobi Desert?",
+          [
+            "Mobius",
+            "Ravonna Renslayer",
+            "Hunter B-15",
+            "Sylvie"
+          ],
+          2
+        ],
+
+        [
+          "What does the TVA call Loki after his escape from the Avengers' 2012 operation?",
+          [
+            "A Time-Keeper",
+            "A Temporal Variant",
+            "A Nexus Guardian",
+            "A Timeline Warden"
+          ],
+          1
+        ],
+
+        [
+          "What happens to the Infinity Stones inside the TVA?",
+          [
+            "They become more powerful",
+            "They stop working",
+            "They turn into weapons",
+            "They create new timelines"
+          ],
+          1
+        ],
+
+        [
+          "Who is the judge who presides over Loki's trial at the TVA?",
+          [
+            "Hunter B-15",
+            "Sylvie",
+            "Ravonna Renslayer",
+            "Miss Minutes"
+          ],
+          2
+        ],
+
+        [
+          "What are the Time-Keepers revealed to be?",
+          [
+            "Real cosmic gods",
+            "Powerful variants of Loki",
+            "Robotic puppets",
+            "TVA founders from Earth"
+          ],
+          2
+        ],
+
+        [
+          "What does Sylvie use to gain control over Alioth?",
+          [
+            "A Tempad",
+            "Enchantment",
+            "The Tesseract",
+            "The Time Stone"
+          ],
+          1
+        ],
+
+        [
+          "In which year does the Lamentis-1 event take place?",
+          [
+            "1971",
+            "1985",
+            "2050",
+            "2077"
+          ],
+          3
+        ],
+
+        [
+          "What location is being evacuated when Loki and Sylvie arrive in 2050?",
+          [
+            "Roxxcart",
+            "Stark Tower",
+            "The Citadel",
+            "The TVA"
+          ],
+          0
+        ],
+
+        [
+          "What problem does Loki experience at the beginning of Season 2?",
+          [
+            "He loses his magic",
+            "He begins time-slipping",
+            "He loses his memories",
+            "He becomes trapped in the Void"
+          ],
+          1
+        ],
+
+        [
+          "Who helps Loki understand and fix his time-slipping problem?",
+          [
+            "Victor Timely",
+            "Ouroboros",
+            "He Who Remains",
+            "Hunter X-5"
+          ],
+          1
+        ],
+
+        [
+          "What was Victor Timely's profession?",
+          [
+            "Soldier",
+            "Inventor",
+            "TVA judge",
+            "Astronomer"
+          ],
+          1
+        ],
+
+        [
+          "What is Casey's real name?",
+          [
+            "Frank Morris",
+            "Mobius",
+            "Brad Wolfe",
+            "Hunter B-15"
+          ],
+          0
+        ],
+
+        [
+          "Who is Brad Wolfe?",
+          [
+            "Hunter X-5's identity on the timeline",
+            "A variant of Loki",
+            "A TVA engineer",
+            "Victor Timely's assistant"
+          ],
+          0
+        ],
+
+        [
+          "What is Miss Minutes?",
+          [
+            "A TVA employee from the future",
+            "An artificial intelligence represented as an animated clock",
+            "A Time-Keeper",
+            "A variant of Sylvie"
+          ],
+          1
+        ],
+
+        [
+          "Where does He Who Remains live?",
+          [
+            "The Void",
+            "Asgard",
+            "The Citadel at the End of Time",
+            "The TVA Archives"
+          ],
+          2
+        ],
+
+        [
+          "What happens to the Time-Keepers after Sylvie and Loki discover the truth about them?",
+          [
+            "They escape",
+            "They reveal their true identities",
+            "They are exposed as robotic puppets",
+            "They become variants"
+          ],
+          2
+        ],
+
+        [
+          "Which character is played by Ke Huy Quan in Season 2?",
+          [
+            "Victor Timely",
+            "Ouroboros",
+            "Brad Wolfe",
+            "He Who Remains"
+          ],
+          1
+        ],
+
+        [
+          "What does Loki do repeatedly in the Season 2 finale before making his final choice?",
+          [
+            "He tries to destroy the TVA",
+            "He attempts to save the Temporal Loom and the branching timelines",
+            "He searches for Sylvie",
+            "He tries to become ruler of the TVA"
+          ],
+          1
+        ]
       ]
     };
 
-    // === ЛОКАЛИЗАЦИЯ ИНТЕРФЕЙСА ===
+
+    // ============================================================
+    // ЛОКАЛИЗАЦИЯ
+    // ============================================================
+
     const i18n = {
+
       ru: {
         title: "ДОСЬЕ: ЛОКИ ЛАФЕЙСОН",
         subtitle: "СВЯЩЕННАЯ ЛИНИЯ ВРЕМЕНИ ЖДЕТ ПОДТВЕРЖДЕНИЯ ДАННЫХ.",
@@ -429,14 +2030,40 @@
         enterName: "ВВЕДИТЕ ID ВАРИАНТА ДЛЯ СОХРАНЕНИЯ В АРХИВ:",
         btnSave: "СОХРАНИТЬ",
         lbTitle: "АРХИВ ВАРИАНТОВ (ТОП-10)",
+        lbLoading: "ЗАГРУЗКА АРХИВА...",
+        lbError: "НЕ УДАЛОСЬ ПОДКЛЮЧИТЬСЯ К АРХИВУ.",
+        lbRetry: "ПОПРОБУЙТЕ СОХРАНИТЬ РЕЗУЛЬТАТ ЕЩЁ РАЗ.",
+        saved: "РЕЗУЛЬТАТ СОХРАНЁН В АРХИВЕ.",
+        saveError: "ОШИБКА СОХРАНЕНИЯ. ПРОВЕРЬТЕ ПОДКЛЮЧЕНИЕ.",
         ranks: [
-          { min: 45, t: 'ХРАНИТЕЛЬ', d: 'Тот, Кто Остаётся, был бы впечатлён.' },
-          { min: 38, t: 'МАСТЕР ИЛЛЮЗИЙ', d: 'Глубокие знания. Вы успешно маневрируете между событиями.' },
-          { min: 30, t: 'АГЕНТ TVA', d: 'Мобиус готов взять вас в напарники.' },
-          { min: 20, t: 'ВАРИАНТ', d: 'Обнаружены отклонения. Требуется пересмотр архивов.' },
-          { min: 0, t: 'КРОКОДИЛ', d: 'Критическое расхождение таймлайна. Готовьтесь к удалению.' }
+          {
+            min: 45,
+            t: "ХРАНИТЕЛЬ",
+            d: "Тот, Кто Остаётся, был бы впечатлён."
+          },
+          {
+            min: 38,
+            t: "МАСТЕР ИЛЛЮЗИЙ",
+            d: "Глубокие знания. Вы успешно маневрируете между событиями."
+          },
+          {
+            min: 30,
+            t: "АГЕНТ TVA",
+            d: "Мобиус готов взять вас в напарники."
+          },
+          {
+            min: 20,
+            t: "ВАРИАНТ",
+            d: "Обнаружены отклонения. Требуется пересмотр архивов."
+          },
+          {
+            min: 0,
+            t: "КРОКОДИЛ",
+            d: "Критическое расхождение таймлайна. Готовьтесь к удалению."
+          }
         ]
       },
+
       en: {
         title: "FILE: LOKI LAUFEYSON",
         subtitle: "THE SACRED TIMELINE AWAITS DATA CONFIRMATION.",
@@ -453,223 +2080,830 @@
         enterName: "ENTER VARIANT ID TO ARCHIVE RECORD:",
         btnSave: "SUBMIT",
         lbTitle: "VARIANT ARCHIVE (TOP-10)",
+        lbLoading: "LOADING ARCHIVE...",
+        lbError: "COULD NOT CONNECT TO THE ARCHIVE.",
+        lbRetry: "PLEASE TRY SUBMITTING AGAIN.",
+        saved: "RESULT SAVED TO THE ARCHIVE.",
+        saveError: "SAVE ERROR. CHECK YOUR CONNECTION.",
         ranks: [
-          { min: 45, t: 'THE KEEPER', d: 'He Who Remains would be impressed.' },
-          { min: 38, t: 'MASTER OF ILLUSION', d: 'Deep knowledge. You navigate timeline events perfectly.' },
-          { min: 30, t: 'TVA AGENT', d: 'Mobius is ready to take you on as a partner.' },
-          { min: 20, t: 'VARIANT', d: 'Variances detected. Archive review required.' },
-          { min: 0, t: 'ALLIGATOR', d: 'Critical timeline divergence. Prepare to be pruned.' }
+          {
+            min: 45,
+            t: "THE KEEPER",
+            d: "He Who Remains would be impressed."
+          },
+          {
+            min: 38,
+            t: "MASTER OF ILLUSION",
+            d: "Deep knowledge. You navigate timeline events perfectly."
+          },
+          {
+            min: 30,
+            t: "TVA AGENT",
+            d: "Mobius is ready to take you on as a partner."
+          },
+          {
+            min: 20,
+            t: "VARIANT",
+            d: "Variances detected. Archive review required."
+          },
+          {
+            min: 0,
+            t: "ALLIGATOR",
+            d: "Critical timeline divergence. Prepare to be pruned."
+          }
         ]
       }
     };
 
-    let lang = 'ru'; // По умолчанию
-    let questions = [];
-    let i = 0, score = 0, answered = false;
-    let npcTimer;
 
-    // Выбор языка и инициализация
+    // ============================================================
+    // СОСТОЯНИЕ КВИЗА
+    // ============================================================
+
+    let lang = "ru";
+    let questions = [];
+    let i = 0;
+    let score = 0;
+    let answered = false;
+    let npcTimer = null;
+    let savingScore = false;
+
+
+    // ============================================================
+    // ВЫБОР ЯЗЫКА
+    // ============================================================
+
     function setLanguage(selectedLang) {
+
       lang = selectedLang;
       questions = db[lang];
-      
-      // Обновляем тексты на главном экране
-      document.getElementById('uiTitle').textContent = i18n[lang].title;
-      document.getElementById('uiSubtitle').textContent = i18n[lang].subtitle;
-      document.getElementById('uiBtnStart').textContent = i18n[lang].btnStart;
-      document.getElementById('uiAnalysisComplete').textContent = i18n[lang].analysisComplete;
-      document.getElementById('uiEnterName').textContent = i18n[lang].enterName;
-      document.getElementById('uiBtnSave').textContent = i18n[lang].btnSave;
-      document.getElementById('uiLbTitle').textContent = i18n[lang].lbTitle;
-      document.getElementById('uiBtnRestart').textContent = i18n[lang].btnRestart;
-      
-      // Переключаем экраны
-      document.getElementById('langScreen').classList.add('hidden');
-      document.getElementById('startScreen').classList.remove('hidden');
+
+      document.getElementById("uiTitle").textContent =
+        i18n[lang].title;
+
+      document.getElementById("uiSubtitle").textContent =
+        i18n[lang].subtitle;
+
+      document.getElementById("uiBtnStart").textContent =
+        i18n[lang].btnStart;
+
+      document.getElementById("uiAnalysisComplete").textContent =
+        i18n[lang].analysisComplete;
+
+      document.getElementById("uiEnterName").textContent =
+        i18n[lang].enterName;
+
+      document.getElementById("uiBtnSave").textContent =
+        i18n[lang].btnSave;
+
+      document.getElementById("uiLbTitle").textContent =
+        i18n[lang].lbTitle;
+
+      document.getElementById("uiBtnRestart").textContent =
+        i18n[lang].btnRestart;
+
+      document.getElementById("langScreen")
+        .classList.add("hidden");
+
+      document.getElementById("startScreen")
+        .classList.remove("hidden");
     }
+
+
+    // ============================================================
+    // MISS MINUTES
+    // ============================================================
 
     function resetMissMinutes() {
-      const npc = document.getElementById('missMinutes');
-      const mmImage = document.getElementById('mmImage');
-      npc.className = 'miss-minutes-container';
-      mmImage.src = 'miss_normal.png'; 
-      document.getElementById('tvaScreen').classList.remove('glitch-screen');
-      document.getElementById('nexusBranch').classList.remove('draw-branch');
+
+      const npc =
+        document.getElementById("missMinutes");
+
+      const mmImage =
+        document.getElementById("mmImage");
+
+      npc.className =
+        "miss-minutes-container";
+
+      mmImage.src =
+        "miss_normal.png";
+
+      document.getElementById("tvaScreen")
+        .classList.remove("glitch-screen");
+
+      document.getElementById("nexusBranch")
+        .classList.remove("draw-branch");
     }
 
-    function startQuiz(){
-      i = 0; score = 0; answered = false;
-      document.getElementById('startScreen').classList.add('hidden');
-      document.getElementById('resultScreen').classList.add('hidden');
-      document.getElementById('leaderboardInputSection').classList.remove('hidden');
-      document.getElementById('leaderboardViewSection').classList.add('hidden');
-      document.getElementById('quizContainer').classList.remove('hidden');
+
+    // ============================================================
+    // СТАРТ
+    // ============================================================
+
+    function startQuiz() {
+
+      i = 0;
+      score = 0;
+      answered = false;
+
+      document.getElementById("startScreen")
+        .classList.add("hidden");
+
+      document.getElementById("resultScreen")
+        .classList.add("hidden");
+
+      document.getElementById("leaderboardInputSection")
+        .classList.remove("hidden");
+
+      document.getElementById("leaderboardViewSection")
+        .classList.add("hidden");
+
+      document.getElementById("quizContainer")
+        .classList.remove("hidden");
+
       render();
     }
 
-    function render(){
+
+    // ============================================================
+    // РЕНДЕР ВОПРОСА
+    // ============================================================
+
+    function render() {
+
       answered = false;
+
       resetMissMinutes();
+
       const q = questions[i];
-      
-      document.getElementById('qnum').textContent = `${i18n[lang].query} ${i+1} ${i18n[lang].of} ${questions.length}`;
-      document.getElementById('question').textContent = q[0];
-      document.getElementById('scoreTop').textContent = `${i18n[lang].vars}: ${score}/${questions.length}`;
-      
-      const explain = document.getElementById('explainText');
-      explain.textContent = '';
-      explain.classList.add('hidden');
-      document.getElementById('nextBtn').classList.add('hidden');
-      
-      const box = document.getElementById('answers'); 
-      box.innerHTML = '';
-      box.classList.remove('answered');
-      
-      q[1].forEach((a, idx)=>{
-        const b = document.createElement('button');
-        b.className = 'answer';
-        b.innerHTML = `[${String.fromCharCode(65+idx)}] ${a}`;
-        b.onclick = () => choose(idx, b);
-        box.appendChild(b);
+
+      document.getElementById("qnum").textContent =
+        `${i18n[lang].query} ${i + 1} ${i18n[lang].of} ${questions.length}`;
+
+      document.getElementById("question").textContent =
+        q[0];
+
+      document.getElementById("scoreTop").textContent =
+        `${i18n[lang].vars}: ${score}/${questions.length}`;
+
+      const explain =
+        document.getElementById("explainText");
+
+      explain.textContent = "";
+      explain.classList.add("hidden");
+
+      document.getElementById("nextBtn")
+        .classList.add("hidden");
+
+      const box =
+        document.getElementById("answers");
+
+      box.innerHTML = "";
+      box.classList.remove("answered");
+
+      q[1].forEach((answer, idx) => {
+
+        const button =
+          document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent =
+          `[${String.fromCharCode(65 + idx)}] ${answer}`;
+
+        button.onclick = () =>
+          choose(idx, button);
+
+        box.appendChild(button);
       });
-      
-      const branch = document.getElementById('nexusBranch');
-      branch.style.animation = 'none';
-      branch.offsetHeight; 
+
+      const branch =
+        document.getElementById("nexusBranch");
+
+      branch.style.animation = "none";
+
+      branch.offsetHeight;
+
       branch.style.animation = null;
     }
 
-    function choose(idx, btn){
-      if(answered) return;
-      answered = true;
-      
-      const q = questions[i], buttons = [...document.querySelectorAll('.answer')];
-      const box = document.getElementById('answers');
-      box.classList.add('answered');
-      buttons.forEach(b => b.disabled = true);
-      
-      const correct = q[2];
-      const npc = document.getElementById('missMinutes');
-      const mmImage = document.getElementById('mmImage');
-      const explain = document.getElementById('explainText');
-      
-      if(idx === correct){
-        score++;
-        btn.classList.add('correct');
-        npc.classList.add('is-happy');
-        mmImage.src = 'miss_normal.png'; 
-        
-        explain.style.color = 'var(--tva-green)';
-        explain.textContent = i18n[lang].confirmed;
-      } else {
-        btn.classList.add('wrong');
-        buttons[correct].classList.add('correct');
-        npc.classList.add('is-angry');
-        mmImage.src = 'miss_angry.png';
-        
-        document.getElementById('nexusBranch').classList.add('draw-branch');
-        document.getElementById('tvaScreen').classList.add('glitch-screen');
-        
-        explain.style.color = 'var(--tva-red)';
-        explain.textContent = i18n[lang].variance + q[1][correct];
+
+    // ============================================================
+    // ОТВЕТ
+    // ============================================================
+
+    function choose(idx, btn) {
+
+      if (answered) {
+        return;
       }
-      
-      explain.classList.remove('hidden');
-      document.getElementById('scoreTop').textContent = `${i18n[lang].vars}: ${score}/${questions.length}`;
-      
-      const nextBtn = document.getElementById('nextBtn');
-      nextBtn.classList.remove('hidden');
-      nextBtn.textContent = i === questions.length - 1 ? i18n[lang].btnAnalysis : i18n[lang].btnNext;
-      
+
+      answered = true;
+
+      const q = questions[i];
+
+      const buttons =
+        [...document.querySelectorAll(".answer")];
+
+      const box =
+        document.getElementById("answers");
+
+      box.classList.add("answered");
+
+      buttons.forEach(button => {
+        button.disabled = true;
+      });
+
+      const correct =
+        q[2];
+
+      const npc =
+        document.getElementById("missMinutes");
+
+      const mmImage =
+        document.getElementById("mmImage");
+
+      const explain =
+        document.getElementById("explainText");
+
+      if (idx === correct) {
+
+        score++;
+
+        btn.classList.add("correct");
+
+        npc.classList.add("is-happy");
+
+        mmImage.src =
+          "miss_normal.png";
+
+        explain.style.color =
+          "var(--tva-green)";
+
+        explain.textContent =
+          i18n[lang].confirmed;
+
+      } else {
+
+        btn.classList.add("wrong");
+
+        buttons[correct]
+          .classList.add("correct");
+
+        npc.classList.add("is-angry");
+
+        mmImage.src =
+          "miss_angry.png";
+
+        document.getElementById("nexusBranch")
+          .classList.add("draw-branch");
+
+        document.getElementById("tvaScreen")
+          .classList.add("glitch-screen");
+
+        explain.style.color =
+          "var(--tva-red)";
+
+        explain.textContent =
+          i18n[lang].variance +
+          q[1][correct];
+      }
+
+      explain.classList.remove("hidden");
+
+      document.getElementById("scoreTop").textContent =
+        `${i18n[lang].vars}: ${score}/${questions.length}`;
+
+      const nextBtn =
+        document.getElementById("nextBtn");
+
+      nextBtn.classList.remove("hidden");
+
+      nextBtn.textContent =
+        i === questions.length - 1
+          ? i18n[lang].btnAnalysis
+          : i18n[lang].btnNext;
+
       clearTimeout(npcTimer);
-      npcTimer = setTimeout(resetMissMinutes, 4000);
+
+      npcTimer =
+        setTimeout(resetMissMinutes, 4000);
     }
 
-    function nextQuestion(){
-      if(i < questions.length - 1) {
+
+    // ============================================================
+    // СЛЕДУЮЩИЙ ВОПРОС
+    // ============================================================
+
+    function nextQuestion() {
+
+      if (i < questions.length - 1) {
+
         i++;
+
         render();
-        document.querySelector('.quiz-panel').scrollTo({top: 0, behavior: 'smooth'});
+
+        document
+          .querySelector(".quiz-panel")
+          .scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
       } else {
+
         finish();
       }
     }
 
-    function finish(){
-      document.getElementById('quizContainer').classList.add('hidden');
-      document.getElementById('resultScreen').classList.remove('hidden');
-      document.getElementById('playerName').value = ''; // Очищаем поле ввода
+
+    // ============================================================
+    // РЕЗУЛЬТАТ
+    // ============================================================
+
+    function finish() {
+
+      document.getElementById("quizContainer")
+        .classList.add("hidden");
+
+      document.getElementById("resultScreen")
+        .classList.remove("hidden");
+
+      document.getElementById("playerName")
+        .value = "";
+
+      document.getElementById("leaderboardInputSection")
+        .classList.remove("hidden");
+
+      document.getElementById("leaderboardViewSection")
+        .classList.add("hidden");
+
       resetMissMinutes();
-      
-      document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
-      
-      // Определение статуса
-      const ranksData = i18n[lang].ranks;
-      let rankText = ranksData[4].t, descText = ranksData[4].d;
-      
-      for(let r of ranksData) {
-        if(score >= r.min) { rankText = r.t; descText = r.d; break; }
-      }
-      
-      document.getElementById('rank').textContent = rankText;
-      document.getElementById('resultText').textContent = descText;
-      
-      const npc = document.getElementById('missMinutes');
-      const mmImage = document.getElementById('mmImage');
 
-      if(score >= 38) {
-        npc.classList.add('is-happy');
-        mmImage.src = 'miss_normal.png';
+      document.getElementById("finalScore").textContent =
+        `${score} / ${questions.length}`;
+
+      const ranksData =
+        i18n[lang].ranks;
+
+      let rankText =
+        ranksData[ranksData.length - 1].t;
+
+      let descText =
+        ranksData[ranksData.length - 1].d;
+
+      for (const rank of ranksData) {
+
+        if (score >= rank.min) {
+
+          rankText = rank.t;
+          descText = rank.d;
+
+          break;
+        }
+      }
+
+      document.getElementById("rank").textContent =
+        rankText;
+
+      document.getElementById("resultText").textContent =
+        descText;
+
+      const npc =
+        document.getElementById("missMinutes");
+
+      const mmImage =
+        document.getElementById("mmImage");
+
+      if (score >= 38) {
+
+        npc.classList.add("is-happy");
+
+        mmImage.src =
+          "miss_normal.png";
+
       } else {
-        npc.classList.add('is-angry');
-        mmImage.src = 'miss_angry.png';
+
+        npc.classList.add("is-angry");
+
+        mmImage.src =
+          "miss_angry.png";
       }
     }
 
-    // === СИСТЕМА ЛИДЕРБОРДА ===
-    function saveScore() {
-      let name = document.getElementById('playerName').value.trim();
-      if (!name) name = "VARIANT_UNKNOWN";
-      
-      // Загружаем существующие данные
-      let lb = JSON.parse(localStorage.getItem('tva_loki_leaderboard') || '[]');
-      
-      // Добавляем новый результат
-      lb.push({ name: name, score: score, date: new Date().toLocaleDateString() });
-      
-      // Сортируем по убыванию очков
-      lb.sort((a, b) => b.score - a.score);
-      
-      // Оставляем только Топ-10
-      lb = lb.slice(0, 10);
-      
-      // Сохраняем обратно в localStorage
-      localStorage.setItem('tva_loki_leaderboard', JSON.stringify(lb));
-      
-      showLeaderboard(lb);
+
+    // ============================================================
+    // СОХРАНЕНИЕ РЕЗУЛЬТАТА В GOOGLE SHEETS
+    // ============================================================
+
+    async function saveScore() {
+
+      if (savingScore) {
+        return;
+      }
+
+      let name =
+        document
+          .getElementById("playerName")
+          .value
+          .trim();
+
+      if (!name) {
+        name = "VARIANT_UNKNOWN";
+      }
+
+      name = name.substring(0, 30);
+
+      const saveButton =
+        document.getElementById("uiBtnSave");
+
+      savingScore = true;
+
+      saveButton.disabled = true;
+
+      saveButton.textContent =
+        lang === "ru"
+          ? "СОХРАНЕНИЕ..."
+          : "SAVING...";
+
+      try {
+
+        /*
+         * Используем URLSearchParams.
+         *
+         * Это обычный form-urlencoded POST,
+         * который не требует JSON preflight.
+         */
+
+        const body =
+          new URLSearchParams({
+            action: "submit",
+            name: name,
+            score: String(score),
+            correct: String(score),
+            total: String(questions.length),
+            language: lang.toUpperCase()
+          });
+
+        const response =
+          await fetch(LEADERBOARD_API, {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/x-www-form-urlencoded;charset=UTF-8"
+            },
+            body: body.toString()
+          });
+
+        if (!response.ok) {
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+        }
+
+        const result =
+          await response.json();
+
+        if (!result.success) {
+          throw new Error(
+            result.error || "Unknown API error"
+          );
+        }
+
+        /*
+         * После успешного сохранения
+         * загружаем актуальный общий рейтинг.
+         */
+
+        await loadLeaderboard();
+
+      } catch (error) {
+
+        console.error(
+          "Leaderboard save error:",
+          error
+        );
+
+        savingScore = false;
+
+        saveButton.disabled = false;
+
+        saveButton.textContent =
+          i18n[lang].btnSave;
+
+        document.getElementById("resultText")
+          .textContent =
+          i18n[lang].saveError;
+
+        alert(
+          i18n[lang].saveError +
+          "\n\n" +
+          i18n[lang].lbRetry
+        );
+      }
     }
+
+
+    // ============================================================
+    // ЗАГРУЗКА ОБЩЕГО LEADERBOARD
+    // ============================================================
+
+    async function loadLeaderboard() {
+
+      const table =
+        document.getElementById("lbTable");
+
+      table.innerHTML = "";
+
+      const loadingRow =
+        document.createElement("tr");
+
+      const loadingCell =
+        document.createElement("td");
+
+      loadingCell.colSpan = 4;
+
+      loadingCell.textContent =
+        i18n[lang].lbLoading;
+
+      loadingRow.appendChild(loadingCell);
+
+      table.appendChild(loadingRow);
+
+      try {
+
+        const response =
+          await fetch(
+            `${LEADERBOARD_API}?action=leaderboard&t=${Date.now()}`,
+            {
+              method: "GET",
+              cache: "no-store"
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+        }
+
+        const result =
+          await response.json();
+
+        if (!result.success) {
+          throw new Error(
+            result.error || "Unknown API error"
+          );
+        }
+
+        showLeaderboard(
+          Array.isArray(result.leaderboard)
+            ? result.leaderboard
+            : []
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Leaderboard loading error:",
+          error
+        );
+
+        table.innerHTML = "";
+
+        const errorRow =
+          document.createElement("tr");
+
+        const errorCell =
+          document.createElement("td");
+
+        errorCell.colSpan = 4;
+
+        errorCell.className =
+          "leaderboard-error";
+
+        errorCell.textContent =
+          i18n[lang].lbError;
+
+        errorRow.appendChild(errorCell);
+
+        table.appendChild(errorRow);
+
+        /*
+         * Если сохранение уже было выполнено,
+         * всё равно показываем экран рейтинга.
+         */
+
+        document.getElementById(
+          "leaderboardInputSection"
+        ).classList.add("hidden");
+
+        document.getElementById(
+          "leaderboardViewSection"
+        ).classList.remove("hidden");
+
+        savingScore = false;
+      }
+    }
+
+
+    // ============================================================
+    // ОТОБРАЖЕНИЕ LEADERBOARD
+    // ============================================================
 
     function showLeaderboard(lb) {
-      document.getElementById('leaderboardInputSection').classList.add('hidden');
-      document.getElementById('leaderboardViewSection').classList.remove('hidden');
-      
-      const tbody = document.getElementById('lbTable');
-      tbody.innerHTML = `<tr><th>ID</th><th>SCORE</th><th>DATE</th></tr>`;
-      
-      lb.forEach(entry => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${entry.name}</td><td>${entry.score}/50</td><td>${entry.date}</td>`;
-        tbody.appendChild(tr);
+
+      document.getElementById(
+        "leaderboardInputSection"
+      ).classList.add("hidden");
+
+      document.getElementById(
+        "leaderboardViewSection"
+      ).classList.remove("hidden");
+
+      const table =
+        document.getElementById("lbTable");
+
+      table.innerHTML = "";
+
+      /*
+       * Заголовок.
+       */
+
+      const header =
+        document.createElement("tr");
+
+      const headers = [
+        "#",
+        "ID",
+        "SCORE",
+        "DATE"
+      ];
+
+      headers.forEach(text => {
+
+        const th =
+          document.createElement("th");
+
+        th.textContent = text;
+
+        header.appendChild(th);
       });
+
+      table.appendChild(header);
+
+      /*
+       * Если архив пока пуст.
+       */
+
+      if (lb.length === 0) {
+
+        const row =
+          document.createElement("tr");
+
+        const cell =
+          document.createElement("td");
+
+        cell.colSpan = 4;
+
+        cell.textContent =
+          lang === "ru"
+            ? "АРХИВ ПОКА ПУСТ."
+            : "ARCHIVE IS EMPTY.";
+
+        row.appendChild(cell);
+
+        table.appendChild(row);
+
+      } else {
+
+        /*
+         * Показываем TOP-10.
+         */
+
+        lb.forEach((entry, index) => {
+
+          const tr =
+            document.createElement("tr");
+
+          const rankCell =
+            document.createElement("td");
+
+          rankCell.textContent =
+            String(index + 1);
+
+          const nameCell =
+            document.createElement("td");
+
+          nameCell.textContent =
+            String(
+              entry.name ||
+              "VARIANT_UNKNOWN"
+            );
+
+          const scoreCell =
+            document.createElement("td");
+
+          const total =
+            Number(entry.total) ||
+            questions.length;
+
+          scoreCell.textContent =
+            `${Number(entry.score) || 0}/${total}`;
+
+          const dateCell =
+            document.createElement("td");
+
+          dateCell.textContent =
+            formatDate(entry.date);
+
+          tr.appendChild(rankCell);
+          tr.appendChild(nameCell);
+          tr.appendChild(scoreCell);
+          tr.appendChild(dateCell);
+
+          table.appendChild(tr);
+        });
+      }
+
+      savingScore = false;
+
+      const saveButton =
+        document.getElementById("uiBtnSave");
+
+      saveButton.disabled = false;
+
+      saveButton.textContent =
+        i18n[lang].btnSave;
     }
 
-    function restart(){
-      // Возвращаем на экран выбора языка
-      document.getElementById('resultScreen').classList.add('hidden');
-      document.getElementById('langScreen').classList.remove('hidden');
-      resetMissMinutes();
-      document.getElementById('scoreTop').textContent = `VARS: 0/50`;
+
+    // ============================================================
+    // ФОРМАТ ДАТЫ
+    // ============================================================
+
+    function formatDate(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+      const date =
+        new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return String(value);
+      }
+
+      return date.toLocaleDateString(
+        lang === "ru"
+          ? "ru-RU"
+          : "en-US"
+      );
     }
+
+
+    // ============================================================
+    // RESTART
+    // ============================================================
+
+    function restart() {
+
+      savingScore = false;
+
+      document.getElementById(
+        "resultScreen"
+      ).classList.add("hidden");
+
+      document.getElementById(
+        "quizContainer"
+      ).classList.add("hidden");
+
+      document.getElementById(
+        "startScreen"
+      ).classList.add("hidden");
+
+      document.getElementById(
+        "leaderboardInputSection"
+      ).classList.remove("hidden");
+
+      document.getElementById(
+        "leaderboardViewSection"
+      ).classList.add("hidden");
+
+      document.getElementById(
+        "langScreen"
+      ).classList.remove("hidden");
+
+      resetMissMinutes();
+
+      document.getElementById(
+        "scoreTop"
+      ).textContent = "VARS: 0/50";
+    }
+
   </script>
+
 </body>
 </html>
+```
