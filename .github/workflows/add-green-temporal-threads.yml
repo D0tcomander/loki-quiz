@@ -1,0 +1,101 @@
+name: Add green temporal threads
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-threads:
+    if: ${{ !contains(github.event.head_commit.message, '[threads-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add temporal thread visuals
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          css_anchor = ".nexus-branch {\n"
+          css_insert = r'''
+          .temporal-thread {
+            fill: none;
+            stroke: #65d88a;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            opacity: .72;
+            filter: drop-shadow(0 0 4px rgba(69,196,134,.95)) drop-shadow(0 0 10px rgba(69,196,134,.55));
+            stroke-dasharray: 7 5;
+            animation: threadFlow 5s linear infinite;
+          }
+          .temporal-thread.thread-bright {
+            stroke: #9affbd;
+            stroke-width: 2.8;
+            opacity: .9;
+            filter: drop-shadow(0 0 5px #45c486) drop-shadow(0 0 14px rgba(69,196,134,.8));
+          }
+          .temporal-node {
+            fill: #70f0a9;
+            opacity: .95;
+            filter: drop-shadow(0 0 5px #45c486) drop-shadow(0 0 13px rgba(69,196,134,.85));
+            animation: nodePulse 2.2s ease-in-out infinite;
+          }
+          @keyframes threadFlow {
+            to { stroke-dashoffset: -48; }
+          }
+          @keyframes nodePulse {
+            0%,100% { opacity:.55; transform:scale(.8); transform-origin:50% 50%; }
+            50% { opacity:1; transform:scale(1.18); transform-origin:50% 50%; }
+          }
+
+          '''
+          if css_anchor in text and '.temporal-thread {' not in text:
+              text = text.replace(css_anchor, css_insert + css_anchor, 1)
+
+          svg_anchor = '''          <path
+            id="nexusBranch"
+            class="nexus-branch"
+            d="M 300 80 Q 450 150 700 130"
+          />
+'''
+
+          svg_insert = svg_anchor + '''
+          <!-- ЗЕЛЁНЫЕ ТЕМПОРАЛЬНЫЕ НИТИ: ТКАЧ / ЛОКИ -->
+          <g class="temporal-threads" aria-hidden="true">
+            <path class="temporal-thread" d="M -20 112 C 105 35 215 38 330 82 S 510 116 635 72 S 765 36 820 55" />
+            <path class="temporal-thread thread-bright" d="M -10 132 C 100 74 190 58 292 82 S 445 132 555 102 S 690 48 815 82" />
+            <path class="temporal-thread" d="M 30 154 C 125 112 210 92 305 91 S 430 105 510 87 S 665 70 805 108" />
+            <path class="temporal-thread" d="M 20 62 C 125 98 205 108 292 91 S 430 42 520 70 S 675 126 805 92" />
+            <path class="temporal-thread thread-bright" d="M 112 10 C 165 58 230 74 300 84 S 425 99 500 83 S 635 36 748 44" />
+            <path class="temporal-thread" d="M 188 160 C 255 124 292 108 350 91 S 450 54 520 72 S 625 112 790 120" />
+            <circle class="temporal-node" cx="400" cy="87" r="4" />
+            <circle class="temporal-node" cx="520" cy="83" r="3" />
+            <circle class="temporal-node" cx="292" cy="91" r="3" />
+          </g>
+'''
+
+          if svg_anchor in text and 'class="temporal-threads"' not in text:
+              text = text.replace(svg_anchor, svg_insert, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Add green temporal threads for Loki and the Loom [threads-fix]"
+          git push
