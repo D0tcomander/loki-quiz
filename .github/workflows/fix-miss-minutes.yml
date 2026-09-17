@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   fix:
-    # Never run again on the commit created by this workflow.
     if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
 
@@ -18,97 +17,153 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Apply stable visual changes
+      - name: Apply final temporal energy design
         shell: python
         run: |
           from pathlib import Path
+          import re
 
           path = Path('index.html')
           text = path.read_text(encoding='utf-8')
 
-          replacements = [
-              ('z-index: 48;\n  background: linear-gradient(115deg', 'z-index: 22;\n  background: linear-gradient(115deg'),
-              ('z-index: 50;\n  pointer-events: none;\n  background: radial-gradient', 'z-index: 20;\n  pointer-events: none;\n  background: radial-gradient'),
-              ('z-index: 49;\n  pointer-events: none;\n  opacity: .72;', 'z-index: 21;\n  pointer-events: none;\n  opacity: .72;'),
-              ('z-index: 10;\n  flex-grow: 1;\n  display: flex;', 'z-index: 30;\n  flex-grow: 1;\n  display: flex;'),
-              ('left:-108px;\n  width:190px;\n  height:auto;\n  z-index:2;', 'left:-132px;\n  width:220px;\n  height:auto;\n  z-index:100;'),
-              ('.terminal-btn.right { align-self:flex-end; }', '.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }'),
-              ('.miss-minutes-container { left:-12px; width:100px; bottom:-72px; z-index:1; }', '.miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }'),
-              ('.miss-minutes-container { width:82px; left:-8px; bottom:-68px; }', '.miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }'),
-          ]
+          # Keep the already-correct interaction/layering behavior stable.
+          text = text.replace(
+              'z-index: 48;\n  background: linear-gradient(115deg',
+              'z-index: 22;\n  background: linear-gradient(115deg'
+          )
+          text = text.replace(
+              'z-index: 50;\n  pointer-events: none;\n  background: radial-gradient',
+              'z-index: 20;\n  pointer-events: none;\n  background: radial-gradient'
+          )
+          text = text.replace(
+              'z-index: 49;\n  pointer-events: none;\n  opacity: .72;',
+              'z-index: 21;\n  pointer-events: none;\n  opacity: .72;'
+          )
+          text = text.replace(
+              'z-index: 10;\n  flex-grow: 1;\n  display: flex;',
+              'z-index: 30;\n  flex-grow: 1;\n  display: flex;',
+              1
+          )
+          text = text.replace(
+              '.terminal-btn.right { align-self:flex-end; }',
+              '.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }'
+          )
 
-          for old, new in replacements:
-              text = text.replace(old, new)
+          # Slightly enlarge Miss Minutes without letting her enter the answer area.
+          text = re.sub(
+              r'\.miss-minutes-container \{\s*position:absolute;\s*bottom:-8px;\s*left:-132px;\s*width:220px;',
+              '.miss-minutes-container {\n  position:absolute;\n  bottom:-8px;\n  left:-145px;\n  width:240px;',
+              text,
+              count=1
+          )
+          text = text.replace(
+              '.miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }',
+              '.miss-minutes-container { left:-18px; width:140px; bottom:-98px; z-index:100; }'
+          )
+          text = text.replace(
+              '.miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }',
+              '.miss-minutes-container { width:132px; left:-14px; bottom:-94px; z-index:100; }'
+          )
 
-          if 'class="temporal-threads"' not in text:
+          # Outside-the-monitor temporal energy: behind the monitor, never over UI.
+          if 'class="temporal-energy-bg"' not in text:
               css = '''
-.temporal-thread {
+.temporal-energy-bg {
+  position: fixed;
+  inset: -12vh -12vw;
+  width: 124vw;
+  height: 124vh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+  opacity: .68;
+}
+.temporal-energy-bg .energy-glow {
   fill: none;
-  stroke: #55d77f;
-  stroke-width: 2.2;
+  stroke: #35d878;
   stroke-linecap: round;
-  opacity: .86;
-  filter: drop-shadow(0 0 4px rgba(69,196,134,.95)) drop-shadow(0 0 10px rgba(69,196,134,.55));
-  stroke-dasharray: 8 6;
-  animation: threadFlow 5s linear infinite;
+  filter: blur(10px);
+  opacity: .22;
 }
-.temporal-thread.thread-bright {
-  stroke: #9affbd;
-  stroke-width: 2.8;
-  opacity: .95;
-  filter: drop-shadow(0 0 5px #45c486) drop-shadow(0 0 12px rgba(69,196,134,.75));
+.temporal-energy-bg .energy-thread {
+  fill: none;
+  stroke: #52e38b;
+  stroke-linecap: round;
+  opacity: .38;
 }
-.temporal-node {
-  fill: #70f0a9;
-  opacity: .95;
-  filter: drop-shadow(0 0 4px #45c486) drop-shadow(0 0 10px rgba(69,196,134,.75));
+.temporal-energy-bg .energy-thread.faint { opacity: .20; }
+.temporal-energy-bg .energy-thread.bright {
+  stroke: #a4ffc3;
+  opacity: .52;
 }
-@keyframes threadFlow { to { stroke-dashoffset: -56; } }
+@media (max-width:900px) {
+  .temporal-energy-bg { opacity:.48; inset:-8vh -35vw; width:170vw; height:116vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .temporal-energy-bg { opacity:.34; }
+}
 '''
-              text = text.replace('.nexus-branch {\n', css + '.nexus-branch {\n', 1)
+              text = text.replace('</style>', css + '  </style>', 1)
 
+              bg = '''
+  <svg class="temporal-energy-bg" viewBox="0 0 1200 900" preserveAspectRatio="none" aria-hidden="true">
+    <path class="energy-glow" stroke-width="24" d="M -80 210 C 120 30 250 170 390 80 S 690 30 820 170 S 1080 290 1280 90" />
+    <path class="energy-glow" stroke-width="18" d="M -60 720 C 150 560 250 760 430 640 S 700 500 860 660 S 1080 790 1280 560" />
+    <path class="energy-thread bright" stroke-width="3" d="M -40 250 C 90 120 210 185 330 105 S 560 65 690 170 S 900 300 1240 120" />
+    <path class="energy-thread" stroke-width="2" d="M -20 310 C 120 190 190 285 315 190 S 550 105 730 220 S 970 345 1240 230" />
+    <path class="energy-thread faint" stroke-width="1.4" d="M 20 130 C 180 260 270 50 420 145 S 700 270 850 130 S 1080 20 1240 150" />
+    <path class="energy-thread" stroke-width="2.2" d="M -50 650 C 100 510 230 600 370 520 S 650 430 800 570 S 1060 720 1260 500" />
+    <path class="energy-thread bright" stroke-width="2.8" d="M -40 770 C 130 650 240 745 390 640 S 650 535 790 675 S 1030 820 1250 650" />
+    <path class="energy-thread faint" stroke-width="1.2" d="M 40 840 C 180 690 290 820 460 710 S 720 610 900 740 S 1100 850 1260 730" />
+  </svg>
+'''
+              text = text.replace('\n  <div class="tva-monitor">', '\n' + bg + '\n  <div class="tva-monitor">', 1)
+
+          # Green temporal threads inside the radar, explicitly underneath the white sacred line.
+          if 'class="timeline-energy-threads"' not in text:
+              inner = '''
+          <defs>
+            <filter id="timelineGreenGlow" x="-20%" y="-30%" width="140%" height="160%">
+              <feGaussianBlur stdDeviation="2.8" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+          <g class="timeline-energy-threads" aria-hidden="true" filter="url(#timelineGreenGlow)">
+            <path d="M -40 108 C 90 38 170 122 292 66 S 505 34 620 88 S 740 122 840 52" fill="none" stroke="#48df82" stroke-width="1.5" opacity=".34" />
+            <path d="M -20 128 C 105 78 190 98 300 76 S 465 54 570 104 S 715 126 835 88" fill="none" stroke="#8dffb3" stroke-width="1.2" opacity=".30" />
+            <path d="M 30 52 C 135 115 220 106 315 84 S 470 34 565 70 S 700 125 815 106" fill="none" stroke="#42d878" stroke-width="1.3" opacity=".28" />
+            <path d="M 90 154 C 185 105 255 112 340 86 S 490 64 575 92 S 710 110 805 132" fill="none" stroke="#5be88d" stroke-width="1" opacity=".22" />
+          </g>
+'''
               marker = '''          <path
-            id="nexusBranch"
-            class="nexus-branch"
-            d="M 300 80 Q 450 150 700 130"
+            class="sacred-path"
+            d="M -50 80 Q 150 30 300 80 T 600 80 T 900 80"
           />'''
-              threads = '''
-          <g class="temporal-threads" aria-hidden="true">
-            <path class="temporal-thread" d="M -20 112 C 105 35 215 38 330 82 S 510 116 635 72 S 765 36 820 55" />
-            <path class="temporal-thread thread-bright" d="M -10 132 C 100 74 190 58 292 82 S 445 132 555 102 S 690 48 815 82" />
-            <path class="temporal-thread" d="M 30 154 C 125 112 210 92 305 91 S 430 105 510 87 S 665 70 805 108" />
-            <path class="temporal-thread" d="M 20 62 C 125 98 205 108 292 91 S 430 42 520 70 S 675 126 805 92" />
-            <path class="temporal-thread thread-bright" d="M 112 10 C 165 58 230 74 300 84 S 425 99 500 83 S 635 36 748 44" />
-            <path class="temporal-thread" d="M 188 160 C 255 124 292 108 350 91 S 450 54 520 72 S 625 112 790 120" />
-            <circle class="temporal-node" cx="400" cy="87" r="3.5" />
-            <circle class="temporal-node" cx="520" cy="83" r="3" />
-            <circle class="temporal-node" cx="292" cy="91" r="3" />
-          </g>'''
-              if marker in text:
-                  text = text.replace(marker, marker + threads, 1)
+              text = text.replace(marker, inner + '\n' + marker, 1)
 
           path.write_text(text, encoding='utf-8')
 
-      - name: Verify
+      - name: Verify final HTML
         shell: python
         run: |
           from pathlib import Path
           text = Path('index.html').read_text(encoding='utf-8')
-          required = [
-              '.temporal-thread {',
-              'class="temporal-threads"',
-              'z-index:100;',
-              'z-index:35;',
-              'z-index:20;',
-              'z-index:21;',
-              'z-index:30;',
-          ]
-          missing = [x for x in required if x not in text]
-          if missing:
-              raise SystemExit('Verification failed: ' + ', '.join(missing))
-          print('Stable visual fix verified.')
+          checks = {
+              'outside temporal energy': 'class="temporal-energy-bg"' in text,
+              'timeline green threads': 'class="timeline-energy-threads"' in text,
+              'Miss Minutes desktop': 'width:240px;' in text,
+              'Miss Minutes mobile': 'width:140px;' in text,
+              'Next button layer': 'z-index:35' in text,
+              'quiz above overlays': 'z-index:30;' in text,
+              'glass below content': 'z-index:20;' in text,
+          }
+          failed = [name for name, ok in checks.items() if not ok]
+          for name, ok in checks.items():
+              print(('OK  ' if ok else 'FAIL') + ' ' + name)
+          if failed:
+              raise SystemExit('Verification failed: ' + ', '.join(failed))
 
-      - name: Commit changes
+      - name: Commit only if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -117,5 +172,5 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Apply stable Loki visual fix [visual-fix]"
+          git commit -m "Add Loki temporal energy background [visual-fix]"
           git push
