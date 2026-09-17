@@ -393,7 +393,7 @@ button.answer:disabled { cursor: default; }
   transition:left .5s ease;
 }
 .terminal-btn:hover::after { left:110%; }
-.terminal-btn.right { align-self:flex-end; }
+.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }
 .terminal-btn:hover { background:var(--tva-amber); color:#090503; text-shadow:none; box-shadow:0 0 18px rgba(255,176,0,.3); }
 .terminal-btn:disabled { opacity:.5; cursor:wait; }
 
@@ -451,10 +451,10 @@ button.answer:disabled { cursor: default; }
 .miss-minutes-container {
   position:absolute;
   bottom:-8px;
-  left:-108px;
-  width:190px;
+  left:-132px;
+  width:220px;
   height:auto;
-  z-index:2;
+  z-index:100;
   animation:float 4s ease-in-out infinite;
   transition:all .3s ease;
   filter:drop-shadow(0 15px 15px rgba(0,0,0,.6));
@@ -489,7 +489,7 @@ button.answer:disabled { cursor: default; }
   .question-box { padding:12px 13px 13px; margin-bottom:14px; }
   .question-box h1 { font-size:19px; line-height:1.38; }
   button.answer { font-size:15px; min-height:49px; padding:12px 12px 12px 48px; }
-  .miss-minutes-container { left:-12px; width:100px; bottom:-72px; z-index:1; }
+  .miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }
 }
 
 @media (max-width:500px) {
@@ -500,7 +500,7 @@ button.answer:disabled { cursor: default; }
   .hud-top { font-size:8px; }
   .question-box h1 { font-size:17px; }
   button.answer { font-size:14px; min-height:46px; padding:10px 10px 10px 44px; }
-  .miss-minutes-container { width:82px; left:-8px; bottom:-68px; }
+  .miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }
   .leaderboard-table { font-size:11px; }
   .leaderboard-table th, .leaderboard-table td { padding:7px 6px; }
 }
