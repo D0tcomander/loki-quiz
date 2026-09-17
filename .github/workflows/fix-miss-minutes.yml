@@ -10,14 +10,13 @@ permissions:
 
 jobs:
   fix:
-    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Apply final temporal energy design
+      - name: Apply visual design
         shell: python
         run: |
           from pathlib import Path
@@ -26,46 +25,24 @@ jobs:
           path = Path('index.html')
           text = path.read_text(encoding='utf-8')
 
+          # A bot-created visual-fix commit already contains the changes.
+          if '[visual-fix]' in text:
+              print('Visual fix already present; nothing to do.')
+              raise SystemExit(0)
+
           # Keep the already-correct interaction/layering behavior stable.
-          text = text.replace(
-              'z-index: 48;\n  background: linear-gradient(115deg',
-              'z-index: 22;\n  background: linear-gradient(115deg'
-          )
-          text = text.replace(
-              'z-index: 50;\n  pointer-events: none;\n  background: radial-gradient',
-              'z-index: 20;\n  pointer-events: none;\n  background: radial-gradient'
-          )
-          text = text.replace(
-              'z-index: 49;\n  pointer-events: none;\n  opacity: .72;',
-              'z-index: 21;\n  pointer-events: none;\n  opacity: .72;'
-          )
-          text = text.replace(
-              'z-index: 10;\n  flex-grow: 1;\n  display: flex;',
-              'z-index: 30;\n  flex-grow: 1;\n  display: flex;',
-              1
-          )
-          text = text.replace(
-              '.terminal-btn.right { align-self:flex-end; }',
-              '.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }'
-          )
+          text = text.replace('z-index: 48;\n  background: linear-gradient(115deg', 'z-index: 22;\n  background: linear-gradient(115deg')
+          text = text.replace('z-index: 50;\n  pointer-events: none;\n  background: radial-gradient', 'z-index: 20;\n  pointer-events: none;\n  background: radial-gradient')
+          text = text.replace('z-index: 49;\n  pointer-events: none;\n  opacity: .72;', 'z-index: 21;\n  pointer-events: none;\n  opacity: .72;')
+          text = text.replace('z-index: 10;\n  flex-grow: 1;\n  display: flex;', 'z-index: 30;\n  flex-grow: 1;\n  display: flex;', 1)
+          text = text.replace('.terminal-btn.right { align-self:flex-end; }', '.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }')
 
-          # Slightly enlarge Miss Minutes without letting her enter the answer area.
-          text = re.sub(
-              r'\.miss-minutes-container \{\s*position:absolute;\s*bottom:-8px;\s*left:-132px;\s*width:220px;',
-              '.miss-minutes-container {\n  position:absolute;\n  bottom:-8px;\n  left:-145px;\n  width:240px;',
-              text,
-              count=1
-          )
-          text = text.replace(
-              '.miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }',
-              '.miss-minutes-container { left:-18px; width:140px; bottom:-98px; z-index:100; }'
-          )
-          text = text.replace(
-              '.miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }',
-              '.miss-minutes-container { width:132px; left:-14px; bottom:-94px; z-index:100; }'
-          )
+          # Slightly enlarge Miss Minutes.
+          text = text.replace('left:-132px;\n  width:220px;', 'left:-145px;\n  width:240px;', 1)
+          text = text.replace('.miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }', '.miss-minutes-container { left:-18px; width:140px; bottom:-98px; z-index:100; }')
+          text = text.replace('.miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }', '.miss-minutes-container { width:132px; left:-14px; bottom:-94px; z-index:100; }')
 
-          # Outside-the-monitor temporal energy: behind the monitor, never over UI.
+          # Background temporal energy behind the monitor.
           if 'class="temporal-energy-bg"' not in text:
               css = '''
 .temporal-energy-bg {
@@ -119,16 +96,10 @@ jobs:
 '''
               text = text.replace('\n  <div class="tva-monitor">', '\n' + bg + '\n  <div class="tva-monitor">', 1)
 
-          # Green temporal threads inside the radar, explicitly underneath the white sacred line.
+          # Green temporal filaments inside the radar, beneath the white sacred line.
           if 'class="timeline-energy-threads"' not in text:
               inner = '''
-          <defs>
-            <filter id="timelineGreenGlow" x="-20%" y="-30%" width="140%" height="160%">
-              <feGaussianBlur stdDeviation="2.8" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
-          <g class="timeline-energy-threads" aria-hidden="true" filter="url(#timelineGreenGlow)">
+          <g class="timeline-energy-threads" aria-hidden="true">
             <path d="M -40 108 C 90 38 170 122 292 66 S 505 34 620 88 S 740 122 840 52" fill="none" stroke="#48df82" stroke-width="1.5" opacity=".34" />
             <path d="M -20 128 C 105 78 190 98 300 76 S 465 54 570 104 S 715 126 835 88" fill="none" stroke="#8dffb3" stroke-width="1.2" opacity=".30" />
             <path d="M 30 52 C 135 115 220 106 315 84 S 470 34 565 70 S 700 125 815 106" fill="none" stroke="#42d878" stroke-width="1.3" opacity=".28" />
@@ -139,9 +110,12 @@ jobs:
             class="sacred-path"
             d="M -50 80 Q 150 30 300 80 T 600 80 T 900 80"
           />'''
+              if marker not in text:
+                  raise SystemExit('Sacred timeline marker not found; refusing to modify file.')
               text = text.replace(marker, inner + '\n' + marker, 1)
 
           path.write_text(text, encoding='utf-8')
+          print('Visual design changes prepared.')
 
       - name: Verify final HTML
         shell: python
@@ -157,9 +131,9 @@ jobs:
               'quiz above overlays': 'z-index:30;' in text,
               'glass below content': 'z-index:20;' in text,
           }
-          failed = [name for name, ok in checks.items() if not ok]
           for name, ok in checks.items():
               print(('OK  ' if ok else 'FAIL') + ' ' + name)
+          failed = [name for name, ok in checks.items() if not ok]
           if failed:
               raise SystemExit('Verification failed: ' + ', '.join(failed))
 
