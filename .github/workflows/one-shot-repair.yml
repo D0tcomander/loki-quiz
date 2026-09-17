@@ -1,8 +1,6 @@
 name: One-shot TVA repair
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -14,23 +12,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Repair visual layers
         shell: python
         run: |
           from pathlib import Path
           import re
-
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-
-          # Keep CRT overlays behind the actual UI.
           s = s.replace('z-index: 48;\n  background: linear-gradient(115deg', 'z-index: 22;\n  background: linear-gradient(115deg', 1)
           s = s.replace('z-index: 50;\n  pointer-events: none;\n  background: radial-gradient', 'z-index: 20;\n  pointer-events: none;\n  background: radial-gradient', 1)
           s = s.replace('z-index: 49;\n  pointer-events: none;\n  opacity: .72;', 'z-index: 21;\n  pointer-events: none;\n  opacity: .72;', 1)
           s = s.replace('z-index: 10;\n  flex-grow: 1;\n  display: flex;\n  flex-direction: column;\n  padding: 22px 30px 28px;', 'z-index: 30;\n  flex-grow: 1;\n  display: flex;\n  flex-direction: column;\n  padding: 22px 30px 28px;', 1)
-
-          # Miss Minutes: sibling above the monitor's glass overlays.
           s = re.sub(r'\.miss-minutes-container \{.*?\n\}', '''.miss-minutes-container {
             position: absolute;
             bottom: -8px;
@@ -43,39 +35,15 @@ jobs:
             filter: drop-shadow(0 15px 15px rgba(0,0,0,.6));
             pointer-events: none;
           }''', s, count=1, flags=re.S)
-
-          # Next button: visible, stable, above overlays.
           s = s.replace('.terminal-btn.right { align-self:flex-end; }', '.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }', 1)
-
-          # Green temporal threads: add real SVG paths, not just glow.
           if '.temporal-thread {' not in s:
               css = '''
-.temporal-thread {
-  fill: none;
-  stroke: #55d77f;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  opacity: .86;
-  filter: drop-shadow(0 0 4px rgba(69,196,134,.95)) drop-shadow(0 0 11px rgba(69,196,134,.62));
-  stroke-dasharray: 8 6;
-  animation: threadFlow 5s linear infinite;
-}
-.temporal-thread.thread-bright {
-  stroke: #9affbd;
-  stroke-width: 3;
-  opacity: .98;
-  filter: drop-shadow(0 0 5px #45c486) drop-shadow(0 0 15px rgba(69,196,134,.9));
-}
-.temporal-node {
-  fill: #70f0a9;
-  opacity: .98;
-  filter: drop-shadow(0 0 5px #45c486) drop-shadow(0 0 13px rgba(69,196,134,.9));
-}
-@keyframes threadFlow { to { stroke-dashoffset: -56; } }
-
+.temporal-thread { fill:none; stroke:#55d77f; stroke-width:2.2; stroke-linecap:round; opacity:.86; filter:drop-shadow(0 0 4px rgba(69,196,134,.95)) drop-shadow(0 0 11px rgba(69,196,134,.62)); stroke-dasharray:8 6; animation:threadFlow 5s linear infinite; }
+.temporal-thread.thread-bright { stroke:#9affbd; stroke-width:3; opacity:.98; filter:drop-shadow(0 0 5px #45c486) drop-shadow(0 0 15px rgba(69,196,134,.9)); }
+.temporal-node { fill:#70f0a9; opacity:.98; filter:drop-shadow(0 0 5px #45c486) drop-shadow(0 0 13px rgba(69,196,134,.9)); }
+@keyframes threadFlow { to { stroke-dashoffset:-56; } }
 '''
               s = s.replace('.nexus-branch {\n', css + '.nexus-branch {\n', 1)
-
           marker = '''          <path
             id="nexusBranch"
             class="nexus-branch"
@@ -83,7 +51,6 @@ jobs:
           />'''
           if 'class="temporal-threads"' not in s and marker in s:
               s = s.replace(marker, marker + '''
-
           <g class="temporal-threads" aria-hidden="true">
             <path class="temporal-thread" d="M -20 112 C 105 35 215 38 330 82 S 510 116 635 72 S 765 36 820 55" />
             <path class="temporal-thread thread-bright" d="M -10 132 C 100 74 190 58 292 82 S 445 132 555 102 S 690 48 815 82" />
@@ -95,22 +62,14 @@ jobs:
             <circle class="temporal-node" cx="520" cy="83" r="3" />
             <circle class="temporal-node" cx="292" cy="91" r="3" />
           </g>''', 1)
-
-          # Responsive placement: below the answer stack, but still above the glass.
           s = s.replace('.miss-minutes-container { left:-12px; width:100px; bottom:-72px; z-index:1; }', '.miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }', 1)
           s = s.replace('.miss-minutes-container { width:82px; left:-8px; bottom:-68px; }', '.miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }', 1)
-
           p.write_text(s, encoding='utf-8')
-          print('visual repair applied')
-
-      - name: Remove obsolete modifier workflows and commit
+      - name: Remove old visual workflows
         run: |
-          rm -f .github/workflows/apply-visual-upgrade.yml
-          rm -f .github/workflows/fix-miss-minutes.yml
-          rm -f .github/workflows/add-green-temporal-threads.yml
-          rm -f .github/workflows/final-visual-fix.yml
+          rm -f .github/workflows/apply-visual-upgrade.yml .github/workflows/fix-miss-minutes.yml .github/workflows/add-green-temporal-threads.yml .github/workflows/final-visual-fix.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html .github/workflows
-          git commit -m "Apply final Loki quiz visual repair" || exit 0
+          git commit -m "Apply final Loki quiz visual repair [final-fix]" || exit 0
           git push
