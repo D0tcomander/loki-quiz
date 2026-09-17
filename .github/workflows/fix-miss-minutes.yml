@@ -2,7 +2,8 @@ name: Apply stable visual fix
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -11,40 +12,35 @@ permissions:
 jobs:
   fix:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Apply visual design
-        shell: python
+      - name: Apply temporal energy design
         run: |
+          python3 <<'PY'
           from pathlib import Path
           import re
 
-          path = Path('index.html')
-          text = path.read_text(encoding='utf-8')
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
 
-          # A bot-created visual-fix commit already contains the changes.
-          if '[visual-fix]' in text:
-              print('Visual fix already present; nothing to do.')
+          # Do not re-apply after the bot has committed the final visual fix.
+          if '<!-- TEMPORAL ENERGY VISUAL FIX -->' in s:
+              print('Final visual fix is already present.')
               raise SystemExit(0)
 
-          # Keep the already-correct interaction/layering behavior stable.
-          text = text.replace('z-index: 48;\n  background: linear-gradient(115deg', 'z-index: 22;\n  background: linear-gradient(115deg')
-          text = text.replace('z-index: 50;\n  pointer-events: none;\n  background: radial-gradient', 'z-index: 20;\n  pointer-events: none;\n  background: radial-gradient')
-          text = text.replace('z-index: 49;\n  pointer-events: none;\n  opacity: .72;', 'z-index: 21;\n  pointer-events: none;\n  opacity: .72;')
-          text = text.replace('z-index: 10;\n  flex-grow: 1;\n  display: flex;', 'z-index: 30;\n  flex-grow: 1;\n  display: flex;', 1)
-          text = text.replace('.terminal-btn.right { align-self:flex-end; }', '.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }')
+          s = s.replace('z-index: 48;\n  background: linear-gradient(115deg', 'z-index: 22;\n  background: linear-gradient(115deg')
+          s = s.replace('z-index: 50;\n  pointer-events: none;\n  background: radial-gradient', 'z-index: 20;\n  pointer-events: none;\n  background: radial-gradient')
+          s = s.replace('z-index: 49;\n  pointer-events: none;\n  opacity: .72;', 'z-index: 21;\n  pointer-events: none;\n  opacity: .72;')
+          s = s.replace('z-index: 10;\n  flex-grow: 1;\n  display: flex;', 'z-index: 30;\n  flex-grow: 1;\n  display: flex;', 1)
+          s = s.replace('.terminal-btn.right { align-self:flex-end; }', '.terminal-btn.right { align-self:flex-end; position:relative; z-index:35; flex-shrink:0; }')
 
-          # Slightly enlarge Miss Minutes.
-          text = text.replace('left:-132px;\n  width:220px;', 'left:-145px;\n  width:240px;', 1)
-          text = text.replace('.miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }', '.miss-minutes-container { left:-18px; width:140px; bottom:-98px; z-index:100; }')
-          text = text.replace('.miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }', '.miss-minutes-container { width:132px; left:-14px; bottom:-94px; z-index:100; }')
+          s = s.replace('left:-132px;\n  width:220px;', 'left:-145px;\n  width:240px;', 1)
+          s = s.replace('.miss-minutes-container { left:-20px; width:120px; bottom:-88px; z-index:100; }', '.miss-minutes-container { left:-18px; width:140px; bottom:-98px; z-index:100; }')
+          s = s.replace('.miss-minutes-container { width:112px; left:-16px; bottom:-86px; z-index:100; }', '.miss-minutes-container { width:132px; left:-14px; bottom:-94px; z-index:100; }')
 
-          # Background temporal energy behind the monitor.
-          if 'class="temporal-energy-bg"' not in text:
-              css = '''
+          css = r'''
 .temporal-energy-bg {
   position: fixed;
   inset: -12vh -12vw;
@@ -69,20 +65,14 @@ jobs:
   opacity: .38;
 }
 .temporal-energy-bg .energy-thread.faint { opacity: .20; }
-.temporal-energy-bg .energy-thread.bright {
-  stroke: #a4ffc3;
-  opacity: .52;
-}
+.temporal-energy-bg .energy-thread.bright { stroke: #a4ffc3; opacity: .52; }
 @media (max-width:900px) {
   .temporal-energy-bg { opacity:.48; inset:-8vh -35vw; width:170vw; height:116vh; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .temporal-energy-bg { opacity:.34; }
-}
 '''
-              text = text.replace('</style>', css + '  </style>', 1)
+          s = s.replace('</style>', css + '  </style>', 1)
 
-              bg = '''
+          bg = r'''
   <svg class="temporal-energy-bg" viewBox="0 0 1200 900" preserveAspectRatio="none" aria-hidden="true">
     <path class="energy-glow" stroke-width="24" d="M -80 210 C 120 30 250 170 390 80 S 690 30 820 170 S 1080 290 1280 90" />
     <path class="energy-glow" stroke-width="18" d="M -60 720 C 150 560 250 760 430 640 S 700 500 860 660 S 1080 790 1280 560" />
@@ -94,11 +84,12 @@ jobs:
     <path class="energy-thread faint" stroke-width="1.2" d="M 40 840 C 180 690 290 820 460 710 S 720 610 900 740 S 1100 850 1260 730" />
   </svg>
 '''
-              text = text.replace('\n  <div class="tva-monitor">', '\n' + bg + '\n  <div class="tva-monitor">', 1)
+          marker = '\n  <div class="tva-monitor">'
+          if marker not in s:
+              raise SystemExit('TVA monitor marker not found')
+          s = s.replace(marker, '\n' + bg + marker, 1)
 
-          # Green temporal filaments inside the radar, beneath the white sacred line.
-          if 'class="timeline-energy-threads"' not in text:
-              inner = '''
+          inner = r'''
           <g class="timeline-energy-threads" aria-hidden="true">
             <path d="M -40 108 C 90 38 170 122 292 66 S 505 34 620 88 S 740 122 840 52" fill="none" stroke="#48df82" stroke-width="1.5" opacity=".34" />
             <path d="M -20 128 C 105 78 190 98 300 76 S 465 54 570 104 S 715 126 835 88" fill="none" stroke="#8dffb3" stroke-width="1.2" opacity=".30" />
@@ -106,45 +97,47 @@ jobs:
             <path d="M 90 154 C 185 105 255 112 340 86 S 490 64 575 92 S 710 110 805 132" fill="none" stroke="#5be88d" stroke-width="1" opacity=".22" />
           </g>
 '''
-              marker = '''          <path
+          sacred = '''          <path
             class="sacred-path"
             d="M -50 80 Q 150 30 300 80 T 600 80 T 900 80"
           />'''
-              if marker not in text:
-                  raise SystemExit('Sacred timeline marker not found; refusing to modify file.')
-              text = text.replace(marker, inner + '\n' + marker, 1)
+          if sacred not in s:
+              raise SystemExit('Sacred path marker not found')
+          s = s.replace(sacred, inner + '\n' + sacred, 1)
 
-          path.write_text(text, encoding='utf-8')
-          print('Visual design changes prepared.')
+          s = s.replace('</body>', '<!-- TEMPORAL ENERGY VISUAL FIX -->\n</body>', 1)
+          p.write_text(s, encoding='utf-8')
+          print('Visual changes applied.')
+          PY
 
-      - name: Verify final HTML
-        shell: python
+      - name: Verify visual fix
         run: |
+          python3 <<'PY'
           from pathlib import Path
-          text = Path('index.html').read_text(encoding='utf-8')
-          checks = {
-              'outside temporal energy': 'class="temporal-energy-bg"' in text,
-              'timeline green threads': 'class="timeline-energy-threads"' in text,
-              'Miss Minutes desktop': 'width:240px;' in text,
-              'Miss Minutes mobile': 'width:140px;' in text,
-              'Next button layer': 'z-index:35' in text,
-              'quiz above overlays': 'z-index:30;' in text,
-              'glass below content': 'z-index:20;' in text,
-          }
-          for name, ok in checks.items():
-              print(('OK  ' if ok else 'FAIL') + ' ' + name)
-          failed = [name for name, ok in checks.items() if not ok]
-          if failed:
-              raise SystemExit('Verification failed: ' + ', '.join(failed))
+          s = Path('index.html').read_text(encoding='utf-8')
+          required = [
+            'class="temporal-energy-bg"',
+            'class="timeline-energy-threads"',
+            'width:240px;',
+            'width:140px;',
+            'z-index:35',
+            'z-index:30;',
+            'z-index:20;'
+          ]
+          missing = [x for x in required if x not in s]
+          if missing:
+              raise SystemExit('Missing: ' + ', '.join(missing))
+          print('All visual checks passed.')
+          PY
 
-      - name: Commit only if changed
+      - name: Commit visual fix
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
+            echo "No changes to commit."
+          else
+            git commit -m "Add Loki temporal energy background [visual-fix]"
+            git push
           fi
-          git commit -m "Add Loki temporal energy background [visual-fix]"
-          git push
